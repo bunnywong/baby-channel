@@ -28,8 +28,5 @@ module.exports = {
   webhook_subscription_created: functions.https.onRequest(
     endpoints.webhookSubscriptionCreated,
   ),
-  webhook_subscription_: functions.https.onRequest(
-    endpoints.webhookSubscriptionCreated,
-  ),
   test: functions.https.onRequest(endpoints.test),
 };

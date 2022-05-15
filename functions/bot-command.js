@@ -8,7 +8,6 @@ const {
   isTyping,
   getUsername,
   getUserId,
-  whitelistUser,
   getStatusInChannel,
 } = require('./utils');
 const {commonKeyboard, langKeyboard} = require('./bot-keyboards');
@@ -35,25 +34,22 @@ bot.command('webhook_stripe', async (ctx) => {
     isTyping(ctx);
     const webhookEndpoints = await stripe.webhookEndpoints.list();
     const data = webhookEndpoints.data;
-    if (getUsername(ctx) === ADMIN_USER) {
-      await ctx.reply(`Stripe webhooks: ${size(data)}pcs`, commonKeyboard);
-      for (let i = 0; i < data.length; i++) {
-        let text = `ID: ${data[i].id}\n`;
-        text += `livemode: ${data[i].livemode}\n`;
-        text += `enabled_events: ${data[i].enabled_events}`;
-        text += `status: ${data[i].status}`;
-        text += `url: ${data[i].url}`;
-        await ctx.reply(
-          text,
-          Markup.inlineKeyboard([
-            Markup.button.callback(
-              '⚠️ DELETE',
-              `del_stripeWebhook_${data[i].id}`,
-            ),
-          ]),
-        );
-      }
-      await ctx.reply('Set Firebase:', commonKeyboard);
+    await ctx.reply(`Stripe webhooks: ${size(data)}pcs`, commonKeyboard);
+    for (let i = 0; i < data.length; i++) {
+      let text = `ID: ${data[i].id}\n`;
+      text += `livemode: ${data[i].livemode}\n`;
+      text += `enabled_events: ${data[i].enabled_events}`;
+      text += `status: ${data[i].status}`;
+      text += `url: ${data[i].url}`;
+      await ctx.reply(
+        text,
+        Markup.inlineKeyboard([
+          Markup.button.callback(
+            '⚠️ DELETE',
+            `del_stripeWebhook_${data[i].id}`,
+          ),
+        ]),
+      );
     }
   }
 });

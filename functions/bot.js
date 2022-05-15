@@ -2,10 +2,9 @@ const functions = require('firebase-functions');
 const {session} = require('telegraf');
 // custom
 const {bot} = require('./utils');
-require('./bot-hear');
 require('./bot-command');
+require('./bot-hear');
 require('./bot-action');
-// require('./bot-playground');
 
 bot.use(session());
 // error handling

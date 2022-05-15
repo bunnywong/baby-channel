@@ -1,0 +1,38 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "start": "firebase emulators:start --only functions:log",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "dev": "firebase serve --port=5001",
+    "mirror": "ngrok http 5001",
+    "deploy": "firebase deploy --only functions; yarn webhook:set",
+    "webhook:info": "curl https://api.telegram.org/bot5198430850:AAHFhXUv_Z695lPcpay_gy9-O1BHVkhbEYg/getWebhookInfo",
+    "webhook:set": "curl https://api.telegram.org/bot5198430850:AAHFhXUv_Z695lPcpay_gy9-O1BHVkhbEYg/setWebhook?url=https://us-central1-signal-killer.cloudfunctions.net/bot",
+    "webhook:get-update": "curl https://api.telegram.org/bot5198430850:AAHFhXUv_Z695lPcpay_gy9-O1BHVkhbEYg/getUpdates",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "16"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "dayjs": "^1.11.2",
+    "dotenv": "^16.0.0",
+    "firebase-admin": "^10.0.2",
+    "firebase-functions": "^3.18.0",
+    "localtunnel": "^2.0.2",
+    "lodash": "^4.17.21",
+    "stripe": "^8.219.0",
+    "telegraf": "^4.7.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^0.2.0"
+  },
+  "private": true
+}

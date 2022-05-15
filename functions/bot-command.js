@@ -1,10 +1,17 @@
-const {STRIPE_TOKEN} = process.env;
+const {STRIPE_TOKEN, CHANNEL_ID} = process.env;
 const {size} = require('lodash');
 const {Markup} = require('telegraf');
 const Stripe = require('stripe');
 const stripe = new Stripe(STRIPE_TOKEN);
 // custom
-const {bot, getUsername, getUserId, isTyping} = require('./utils');
+const {
+  bot,
+  isTyping,
+  getUsername,
+  getUserId,
+  whitelistUser,
+  getStatusInChannel,
+} = require('./utils');
 const {commonKeyboard, langKeyboard} = require('./bot-keyboards');
 const ADMIN_USER = 'brothercar';
 
@@ -54,8 +61,12 @@ bot.command('webhook_stripe', async (ctx) => {
 // cmd: /who
 bot.command('who', async (ctx) => {
   isTyping(ctx);
+  const status = await getStatusInChannel(CHANNEL_ID, getUserId(ctx));
+  if (status === 'kicked') {
+    ctx.reply('Removed from channel');
+  }
   const usernamneText = getUsername(ctx) ? `@${getUsername(ctx)}` : '⚠️ NULL';
   let message = `User ID: ${getUserId(ctx)}\n`;
   message += `Username: ${usernamneText}`;
-  return ctx.reply(message, commonKeyboard);
+  ctx.reply(message, commonKeyboard);
 });

@@ -5,15 +5,9 @@ const {Markup} = require('telegraf');
 const Stripe = require('stripe');
 const stripe = new Stripe(STRIPE_TOKEN);
 // custom
-const {bot, getUsername, getUserId, isTyping} = require('./utils');
+const {bot, getUsername, getUserId, isTyping, lineProduct} = require('./utils');
 const {commonKeyboard} = require('./bot-keyboards');
 
-const lineProduct = (product) => {
-  let text = `💎 **${product?.name}**\n`;
-  text += `${product?.description}\n`;
-  text += '\n';
-  return text;
-};
 const linePrice = (price) => {
   const currency = upperCase(price?.currency);
   const amount = price.unit_amount / price.unit_amount_decimal;
@@ -41,7 +35,6 @@ bot.hears('plans', async (ctx) => {
     cancel_url: `${BASE_URL}/payment_cancel`,
     line_items: [{price: product?.default_price, quantity: 1}],
     mode: 'subscription',
-    client_reference_id: 123, // @TBC
     subscription_data: {
       metadata: {
         channelId: CHANNEL_ID,

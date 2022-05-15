@@ -17,7 +17,7 @@ const whitelistUser = async (channelId, userId) => {
     if (userInChannelStatus === 'kicked') {
       const unbanMember = await bot.telegram.unbanChatMember(channelId, userId);
       if (unbanMember) {
-        console.info(`unbaned user ID: 1495510612`);
+        console.info(`...Unbaned user ID: ${userId}`);
       }
     }
   } catch (err) {
@@ -44,7 +44,7 @@ const webhookSubscriptionDeleted = async (request, response) => {
 
   if (data?.status === 'canceled' && productId) {
     const product = await stripe.products.retrieve(productId);
-    let text = `You have unsubscribed for below:\n\n`;
+    let text = 'You have unsubscribed for below:\n\n';
     text += lineProduct(product);
     bot.telegram.sendMessage(userId, text);
   }
@@ -70,10 +70,9 @@ const webhookSubscriptionCreated = async (request, response) => {
     html += `🔗 channel link: \n${inviteLinkData.invite_link}`;
     bot.telegram.sendMessage(userId, html);
   } else {
-    bot.telegram.sendMessage(
-      userId,
-      `⚠️ Not able to create channel invite link. please contact ${SUPPORT_EMAIL}`,
-    );
+    let text = '⚠️ Not able to create channel invite link\n';
+    text += `please contact ${SUPPORT_EMAIL}`;
+    bot.telegram.sendMessage(userId, text);
   }
   return await response.status(200).end();
 };

@@ -1,8 +1,4 @@
-const {STRIPE_TOKEN} = process.env;
-const Stripe = require('stripe');
-const stripe = new Stripe(STRIPE_TOKEN);
-// custom
-const {bot} = require('./utils');
+const {bot, stripe} = require('./utils');
 
 require('./bot-action');
 bot.action(/unsubscribe_+/, async (ctx) => {

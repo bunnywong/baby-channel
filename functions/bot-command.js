@@ -1,11 +1,10 @@
-const {STRIPE_TOKEN, CHANNEL_ID} = process.env;
+const {CHANNEL_ID} = process.env;
 const {size} = require('lodash');
 const {Markup} = require('telegraf');
-const Stripe = require('stripe');
-const stripe = new Stripe(STRIPE_TOKEN);
 // custom
 const {
   bot,
+  stripe,
   isTyping,
   getUsername,
   getUserId,

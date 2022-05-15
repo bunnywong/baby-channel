@@ -1,11 +1,16 @@
-const {STRIPE_TOKEN, BASE_URL, CHANNEL_ID, PRODUCT_ID} = process.env;
+const {BASE_URL, CHANNEL_ID, PRODUCT_ID} = process.env;
 const {filter, forEach, upperCase} = require('lodash');
 const dayjs = require('dayjs');
 const {Markup} = require('telegraf');
-const Stripe = require('stripe');
-const stripe = new Stripe(STRIPE_TOKEN);
 // custom
-const {bot, getUsername, getUserId, isTyping, lineProduct} = require('./utils');
+const {
+  bot,
+  stripe,
+  getUsername,
+  getUserId,
+  isTyping,
+  lineProduct,
+} = require('./utils');
 const {commonKeyboard} = require('./bot-keyboards');
 
 const linePrice = (price) => {

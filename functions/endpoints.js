@@ -11,7 +11,19 @@ const setHtml = (content) => {
   html += `<h1>${content}</h1></body></html>`;
   return html;
 };
-
+const whitelistUser = async (channelId, userId) => {
+  try {
+    const userInChannelStatus = await getStatusInChannel(channelId, userId);
+    if (userInChannelStatus === 'kicked') {
+      const unbanMember = await bot.telegram.unbanChatMember(channelId, userId);
+      if (unbanMember) {
+        console.info(`unbaned user ID: 1495510612`);
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 // /test
 const test = async (request, response) => {
   // const inviteLinkData = await bot.telegram.banChatMember(CHANNEL_ID)
@@ -52,9 +64,17 @@ const webhookSubscriptionCreated = async (request, response) => {
     name: `user ID: ${userId}`,
     expire_date: data?.canceled_at, // @TODO: check
   });
-  let html = 'SUBSCRIPTION SUCCESS\n\n'; // @TODO: show invoice
-  html += `🔗 channel link: \n${inviteLinkData.invite_link}`;
-  bot.telegram.sendMessage(userId, html);
+  if (inviteLinkData.invite_link) {
+    whitelistUser(channelId, userId);
+    let html = 'SUBSCRIPTION SUCCESS\n\n'; // @TODO: show invoice
+    html += `🔗 channel link: \n${inviteLinkData.invite_link}`;
+    bot.telegram.sendMessage(userId, html);
+  } else {
+    bot.telegram.sendMessage(
+      userId,
+      `⚠️ Not able to create channel invite link. please contact ${SUPPORT_EMAIL}`,
+    );
+  }
   return await response.status(200).end();
 };
 

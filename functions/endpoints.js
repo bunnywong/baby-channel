@@ -26,8 +26,8 @@ const whitelistUser = async (channelId, userId) => {
 };
 // /test
 const test = async (request, response) => {
-  // const inviteLinkData = await bot.telegram.banChatMember(CHANNEL_ID)
-  return await response.status(200).end('test');
+  const result = 'hello test';
+  return await response.status(200).end(result);
 };
 // /payment_cancel
 const paymentCancel = async (request, response) => {

@@ -1,6 +1,6 @@
-const {bot} = require('./utils');
-const {CHANNEL_ID} = process.env;
+const {SUPPORT_EMAIL} = process.env;
 const {get, isEmpty} = require('lodash');
+const {bot, stripe, getStatusInChannel, lineProduct} = require('./utils');
 
 // utils
 const setHtml = (content) => {
@@ -24,6 +24,19 @@ const paymentCancel = async (request, response) => {
 // /payment_success
 const paymentSuccess = async (request, response) => {
   return await response.status(200).end(setHtml('PAYMENT SUCCESS'));
+};
+const webhookSubscriptionDeleted = async (request, response) => {
+  const data = get(request, 'body.data.object', false);
+  const productId = get(data, 'plan.product', false);
+  const userId = data?.metadata?.userId;
+
+  if (data?.status === 'canceled' && productId) {
+    const product = await stripe.products.retrieve(productId);
+    let text = `You have unsubscribed for below:\n\n`;
+    text += lineProduct(product);
+    bot.telegram.sendMessage(userId, text);
+  }
+  return await response.status(200).end();
 };
 // /webhook_subscription_created
 const webhookSubscriptionCreated = async (request, response) => {
@@ -49,5 +62,6 @@ module.exports = {
   test,
   paymentCancel,
   paymentSuccess,
+  webhookSubscriptionDeleted,
   webhookSubscriptionCreated,
 };

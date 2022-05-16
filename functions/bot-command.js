@@ -1,5 +1,5 @@
 const {CHANNEL_ID} = process.env;
-const {size} = require('lodash');
+const {forEach, size} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
 const {
@@ -35,22 +35,19 @@ bot.command('webhook_stripe', async (ctx) => {
     const webhookEndpoints = await stripe.webhookEndpoints.list();
     const data = webhookEndpoints.data;
     await ctx.reply(`Stripe webhooks: ${size(data)}pcs`, commonKeyboard);
-    for (let i = 0; i < data.length; i++) {
-      let text = `ID: ${data[i].id}\n`;
-      text += `livemode: ${data[i].livemode}\n`;
-      text += `enabled_events: ${data[i].enabled_events}`;
-      text += `status: ${data[i].status}`;
-      text += `url: ${data[i].url}`;
+    forEach(data, async (d) => {
+      let text = `1️⃣ ID: ${d.id}\n`;
+      text += `2️⃣ livemode: ${d.livemode}\n`;
+      text += `3️⃣ enabled_events: ${d.enabled_events}\n`;
+      text += `4️⃣ status: ${d.status}\n`;
+      text += `5️⃣ url: ${d.url}`;
       await ctx.reply(
         text,
         Markup.inlineKeyboard([
-          Markup.button.callback(
-            '⚠️ DELETE',
-            `del_stripeWebhook_${data[i].id}`,
-          ),
+          Markup.button.callback('⚠️ DELETE', `del_stripeWebhook_${d.id}`),
         ]),
       );
-    }
+    });
   }
 });
 // cmd: /who

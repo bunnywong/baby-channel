@@ -1,5 +1,6 @@
 const {SUPPORT_EMAIL} = process.env;
 const {get, isEmpty} = require('lodash');
+const {Markup} = require('telegraf');
 const {bot, stripe, getStatusInChannel, lineProduct} = require('./utils');
 
 // utils
@@ -52,23 +53,28 @@ const webhookSubscriptionDeleted = async (request, response) => {
 };
 // /webhook_subscription_created
 const webhookSubscriptionCreated = async (request, response) => {
-  const data = get(request, 'body.data', false);
+  const data = get(request, 'body.data.object', false);
   if (isEmpty(data)) {
     return await response.status(204).end();
   }
-  const metadata = request?.body?.data?.object.metadata;
-  const userId = metadata?.userId;
-  const channelId = metadata?.channelId;
+  const userId = data.metadata?.userId;
+  const channelId = data.metadata?.channelId;
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
     member_limit: 1,
     name: `user ID: ${userId}`,
     expire_date: data?.canceled_at, // @TODO: check
   });
-  if (inviteLinkData.invite_link) {
+  const invoice = await stripe.invoices.retrieve(data?.latest_invoice);
+  if (inviteLinkData?.invite_link && invoice.hosted_invoice_url) {
     whitelistUser(channelId, userId);
-    let html = 'SUBSCRIPTION SUCCESS\n\n'; // @TODO: show invoice
-    html += `🔗 channel link: \n${inviteLinkData.invite_link}`;
-    bot.telegram.sendMessage(userId, html);
+    bot.telegram.sendMessage(
+      userId,
+      'SUBSCRIPTION SUCCESS',
+      Markup.inlineKeyboard([
+        Markup.button.url('Invoice', invoice.hosted_invoice_url),
+        Markup.button.url('🌟 Join Channel', inviteLinkData.invite_link),
+      ]),
+    );
   } else {
     let text = '⚠️ Not able to create channel invite link\n';
     text += `please contact ${SUPPORT_EMAIL}`;

@@ -1,5 +1,6 @@
 const {Telegraf} = require('telegraf');
 const {toString} = require('lodash');
+const dayjs = require('dayjs');
 const {BOT_TOKEN, STRIPE_TOKEN} = process.env;
 
 const bot = new Telegraf(BOT_TOKEN, {
@@ -26,6 +27,12 @@ const lineProduct = (product) => {
   text += '\n';
   return text;
 };
+const lineNextPayment = (data) => {
+  const periodEndDate = dayjs
+    .unix(data?.current_period_end)
+    .format('YYYY.MM.DD');
+  return `Next payment on: ${periodEndDate}`;
+};
 
 module.exports = {
   bot,
@@ -35,4 +42,5 @@ module.exports = {
   getUserId,
   getStatusInChannel,
   lineProduct,
+  lineNextPayment,
 };

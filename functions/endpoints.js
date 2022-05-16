@@ -1,7 +1,13 @@
 const {SUPPORT_EMAIL} = process.env;
 const {get, isEmpty} = require('lodash');
 const {Markup} = require('telegraf');
-const {bot, stripe, getStatusInChannel, lineProduct} = require('./utils');
+const {
+  bot,
+  stripe,
+  getStatusInChannel,
+  lineProduct,
+  lineNextPayment,
+} = require('./utils');
 
 // utils
 const setHtml = (content) => {
@@ -67,9 +73,11 @@ const webhookSubscriptionCreated = async (request, response) => {
   const invoice = await stripe.invoices.retrieve(data?.latest_invoice);
   if (inviteLinkData?.invite_link && invoice.hosted_invoice_url) {
     whitelistUser(channelId, userId);
+    let text = 'Your subscription is ACTIVE\n';
+    text += lineNextPayment(data);
     bot.telegram.sendMessage(
       userId,
-      'SUBSCRIPTION SUCCESS',
+      text,
       Markup.inlineKeyboard([
         Markup.button.url('Invoice', invoice.hosted_invoice_url),
         Markup.button.url('🌟 Join Channel', inviteLinkData.invite_link),

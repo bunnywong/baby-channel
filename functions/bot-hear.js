@@ -1,6 +1,5 @@
 const {BASE_URL, CHANNEL_ID, PRODUCT_ID} = process.env;
 const {filter, forEach, upperCase} = require('lodash');
-const dayjs = require('dayjs');
 const {Markup} = require('telegraf');
 // custom
 const {
@@ -10,6 +9,7 @@ const {
   getUserId,
   isTyping,
   lineProduct,
+  lineNextPayment,
 } = require('./utils');
 const {commonKeyboard} = require('./bot-keyboards');
 
@@ -71,12 +71,11 @@ bot.hears('status', async (ctx) => {
     const product = await stripe.products.retrieve(sub?.plan?.product);
     const price = await stripe.prices.retrieve(product?.default_price);
     const invoice = await stripe.invoices.retrieve(sub?.latest_invoice);
-    const periodEnd = dayjs.unix(sub?.current_period_end).format('YYYY.MM.DD');
     // text content
     let statusText = lineProduct(product);
     statusText += linePrice(price);
     statusText += lineChargeFrequency(price?.recurring);
-    statusText += `Next bill: ${periodEnd}`;
+    statusText += lineNextPayment(sub);
     return await ctx.replyWithMarkdown(
       statusText,
       Markup.inlineKeyboard([

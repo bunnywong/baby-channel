@@ -1,6 +1,6 @@
 const {Markup} = require('telegraf');
 
-const commonKeyboard = Markup.keyboard([['plans', 'status']]).resize();
+const commonKeyboard = Markup.keyboard([['PLANS', 'STATUS']]).resize();
 
 const langKeyboard = Markup.inlineKeyboard([
   Markup.button.callback('English', 'english'),

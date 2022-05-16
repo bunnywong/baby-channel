@@ -26,7 +26,6 @@ const lineChargeFrequency = (recurring) => {
 // LHS: plans
 bot.hears('plans', async (ctx) => {
   isTyping(ctx);
-  // ctx.telegram.sendChatAction(ctx.chat.id, 'typing');
   // fetch Stripe
   const product = await stripe.products.retrieve(PRODUCT_ID);
   const price = await stripe.prices.retrieve(product?.default_price);

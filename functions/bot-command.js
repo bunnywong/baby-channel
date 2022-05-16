@@ -35,8 +35,9 @@ bot.command('webhook_stripe', async (ctx) => {
     const webhookEndpoints = await stripe.webhookEndpoints.list();
     const data = webhookEndpoints.data;
     await ctx.reply(`Stripe webhooks: ${size(data)}pcs`, commonKeyboard);
-    forEach(data, async (d) => {
-      let text = `1️⃣ ID: ${d.id}\n`;
+    forEach(data, async (d, key) => {
+      let text = `${key + 1} of ${size(data)}\n`;
+      text += `1️⃣ ID: ${d.id}\n`;
       text += `2️⃣ livemode: ${d.livemode}\n`;
       text += `3️⃣ enabled_events: ${d.enabled_events}\n`;
       text += `4️⃣ status: ${d.status}\n`;

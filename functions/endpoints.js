@@ -79,7 +79,7 @@ const webhookSubscriptionCreated = async (request, response) => {
       userId,
       text,
       Markup.inlineKeyboard([
-        Markup.button.url('Invoice', invoice.hosted_invoice_url),
+        Markup.button.url('📁 Invoice and Receipt', invoice.hosted_invoice_url),
         Markup.button.url('🌟 Join Channel', inviteLinkData.invite_link),
       ]),
     );

@@ -83,7 +83,7 @@ bot.hears('status', async (ctx) => {
           '📁 Invoice and Receipt',
           invoice?.hosted_invoice_url,
         ),
-        Markup.button.callback('Unsubscribe', `unsubscribe_${sub?.id}`),
+        Markup.button.callback('⏹️ Unsubscribe', `unsubscribe_${sub?.id}`),
       ]),
     );
   });

@@ -67,6 +67,7 @@ bot.hears('STATUS', async (ctx) => {
   const textStatus = userInSubscription.length ? textSubscribed : textNewCustom;
   ctx.replyWithMarkdown(textStatus, commonKeyboard);
   // plans combo message
+  isTyping(ctx);
   forEach(userInSubscription, async (sub) => {
     const product = await stripe.products.retrieve(sub?.plan?.product);
     const price = await stripe.prices.retrieve(product?.default_price);

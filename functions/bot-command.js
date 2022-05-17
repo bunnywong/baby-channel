@@ -35,6 +35,7 @@ bot.command('webhook_stripe', async (ctx) => {
     const webhookEndpoints = await stripe.webhookEndpoints.list();
     const data = webhookEndpoints.data;
     await ctx.reply(`Stripe webhooks: ${size(data)}pcs`, commonKeyboard);
+    isTyping(ctx);
     forEach(data, async (d, key) => {
       let text = `${key + 1} of ${size(data)}\n`;
       text += `1️⃣ ID: ${d.id}\n`;

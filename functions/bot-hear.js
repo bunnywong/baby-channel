@@ -1,5 +1,5 @@
 const {BASE_URL, CHANNEL_ID, PRODUCT_ID} = process.env;
-const {filter, forEach, upperCase} = require('lodash');
+const {get, filter, forEach, upperCase} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
 const {
@@ -68,10 +68,21 @@ bot.hears('STATUS', async (ctx) => {
   ctx.replyWithMarkdown(textStatus, commonKeyboard);
   // plans combo message
   isTyping(ctx);
+  // create link: edit billing info
+  const customerId = get(userInSubscription, '[0].customer');
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    mode: 'setup',
+    customer: customerId,
+    success_url: `${BASE_URL}/payment_success`,
+    cancel_url: `${BASE_URL}/payment_cancel`,
+  });
+  isTyping(ctx);
   forEach(userInSubscription, async (sub) => {
     const product = await stripe.products.retrieve(sub?.plan?.product);
     const price = await stripe.prices.retrieve(product?.default_price);
     const invoice = await stripe.invoices.retrieve(sub?.latest_invoice);
+
     // text content
     let statusText = lineProduct(product);
     statusText += linePrice(price);
@@ -80,11 +91,10 @@ bot.hears('STATUS', async (ctx) => {
     return await ctx.replyWithMarkdown(
       statusText,
       Markup.inlineKeyboard([
-        Markup.button.url(
-          '📁 Invoice and Receipt',
-          invoice?.hosted_invoice_url,
-        ),
-        Markup.button.callback('⏹️ Unsubscribe', `unsubscribe_${sub?.id}`),
+        [Markup.button.url('📁 Receipt', invoice?.hosted_invoice_url)],
+        [Markup.button.url('📝 update billing info', session?.url)],
+        [Markup.button.callback('⏹️ Unsubscribe', `unsubscribe_${sub?.id}`)],
+        // @TODO: channel link
       ]),
     );
   });

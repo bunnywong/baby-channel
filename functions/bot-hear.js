@@ -12,6 +12,10 @@ const {
   lineNextPayment,
 } = require('./utils');
 const {commonKeyboard} = require('./bot-keyboards');
+const sessionEndpoints = {
+  success_url: `${BASE_URL}/payment_success`,
+  cancel_url: `${BASE_URL}/payment_cancel`,
+};
 
 const linePrice = (price) => {
   const currency = upperCase(price?.currency);
@@ -35,8 +39,7 @@ bot.hears('PLANS', async (ctx) => {
   planText += lineChargeFrequency(price?.recurring);
 
   const session = await stripe.checkout.sessions.create({
-    success_url: `${BASE_URL}/payment_success`,
-    cancel_url: `${BASE_URL}/payment_cancel`,
+    ...sessionEndpoints,
     line_items: [{price: product?.default_price, quantity: 1}],
     mode: 'subscription',
     subscription_data: {
@@ -74,8 +77,7 @@ bot.hears('STATUS', async (ctx) => {
     payment_method_types: ['card'],
     mode: 'setup',
     customer: customerId,
-    success_url: `${BASE_URL}/payment_success`,
-    cancel_url: `${BASE_URL}/payment_cancel`,
+    ...sessionEndpoints,
   });
   isTyping(ctx);
   forEach(userInSubscription, async (sub) => {

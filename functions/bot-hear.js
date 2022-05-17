@@ -24,7 +24,7 @@ const lineChargeFrequency = (recurring) => {
   return `Charge frequency: ${intervalCount} ${interval}\n`;
 };
 // LHS: plans
-bot.hears('plans', async (ctx) => {
+bot.hears('PLANS', async (ctx) => {
   isTyping(ctx);
   // fetch Stripe
   const product = await stripe.products.retrieve(PRODUCT_ID);
@@ -53,7 +53,7 @@ bot.hears('plans', async (ctx) => {
   );
 });
 // RHS: status
-bot.hears('status', async (ctx) => {
+bot.hears('STATUS', async (ctx) => {
   isTyping(ctx);
   const subscriptions = await stripe.subscriptions.list();
   // filter out active subscribe for current user(as I/O result)

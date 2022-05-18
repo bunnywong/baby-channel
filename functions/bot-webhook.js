@@ -1,7 +1,27 @@
 const {SUPPORT_TEXT} = process.env;
 const {Markup} = require('telegraf');
-const {bot, stripe, lineNextPayment, whitelistUser} = require('./utils');
+const {get} = require('lodash');
+const {
+  bot,
+  stripe,
+  lineNextPayment,
+  whitelistUser,
+  lineProduct,
+} = require('./utils');
 
+const handleSubscriptionDeleted = async (response, data) => {
+  const productId = get(data, 'plan.product', false);
+  const userId = data?.metadata?.userId;
+
+  if (data?.status === 'canceled' && productId) {
+    const product = await stripe.products.retrieve(productId);
+    let text = 'Your subscription was canceled successfully.\n';
+    text += 'You will not be charged again for this subscription:\n\n';
+    text += lineProduct(product);
+    bot.telegram.sendMessage(userId, text);
+  }
+  return await response.status(200).end();
+};
 const handleSubscriptionCreated = async (response, data) => {
   const userId = data.metadata?.userId;
   const channelId = data.metadata?.channelId;
@@ -32,5 +52,6 @@ const handleSubscriptionCreated = async (response, data) => {
 };
 
 module.exports = {
+  handleSubscriptionDeleted,
   handleSubscriptionCreated,
 };

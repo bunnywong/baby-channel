@@ -1,6 +1,8 @@
-const {get, isEmpty} = require('lodash');
-const {bot, stripe, lineProduct} = require('./utils');
-const {handleSubscriptionCreated} = require('./bot-webhook');
+const {isEmpty} = require('lodash');
+const {
+  handleSubscriptionCreated,
+  handleSubscriptionDeleted,
+} = require('./bot-webhook');
 
 // utils
 const setHtml = (content) => {
@@ -24,19 +26,6 @@ const paymentCancel = async (request, response) => {
 const paymentSuccess = async (request, response) => {
   return await response.status(200).end(setHtml('PAYMENT SUCCESS'));
 };
-const webhookSubscriptionDeleted = async (request, response) => {
-  const data = get(request, 'body.data.object', false);
-  const productId = get(data, 'plan.product', false);
-  const userId = data?.metadata?.userId;
-
-  if (data?.status === 'canceled' && productId) {
-    const product = await stripe.products.retrieve(productId);
-    let text = 'You have unsubscribed for below:\n\n';
-    text += lineProduct(product);
-    bot.telegram.sendMessage(userId, text);
-  }
-  return await response.status(200).end();
-};
 // /webhook_subscription_created
 const webhookStripe = async (request, response) => {
   const data = request?.body?.data?.object;
@@ -46,6 +35,8 @@ const webhookStripe = async (request, response) => {
   switch (request?.body?.type) {
     case 'customer.subscription.created':
       return handleSubscriptionCreated(response, data);
+    case 'customer.subscription.deleted':
+      return handleSubscriptionDeleted(response, data);
     default:
       return await response.status(203).end();
   }
@@ -56,5 +47,4 @@ module.exports = {
   paymentCancel,
   paymentSuccess,
   webhookStripe,
-  webhookSubscriptionDeleted,
 };

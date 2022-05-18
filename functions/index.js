@@ -22,9 +22,6 @@ module.exports = {
   }),
   payment_success: functions.https.onRequest(endpoints.paymentSuccess),
   payment_cancel: functions.https.onRequest(endpoints.paymentCancel),
-  webhook_subscription_deleted: functions.https.onRequest(
-    endpoints.webhookSubscriptionDeleted,
-  ),
   webhook_stripe: functions.https.onRequest(endpoints.webhookStripe),
   test: functions.https.onRequest(endpoints.test),
 };

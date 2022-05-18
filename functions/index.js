@@ -25,8 +25,6 @@ module.exports = {
   webhook_subscription_deleted: functions.https.onRequest(
     endpoints.webhookSubscriptionDeleted,
   ),
-  webhook_subscription_created: functions.https.onRequest(
-    endpoints.webhookSubscriptionCreated,
-  ),
+  webhook_stripe: functions.https.onRequest(endpoints.webhookStripe),
   test: functions.https.onRequest(endpoints.test),
 };

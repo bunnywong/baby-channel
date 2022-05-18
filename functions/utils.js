@@ -33,6 +33,19 @@ const lineNextPayment = (data) => {
     .format('YYYY.MM.DD');
   return `Next payment on: ${periodEndDate}`;
 };
+const whitelistUser = async (channelId, userId) => {
+  try {
+    const userInChannelStatus = await getStatusInChannel(channelId, userId);
+    if (userInChannelStatus === 'kicked') {
+      const unbanMember = await bot.telegram.unbanChatMember(channelId, userId);
+      if (unbanMember) {
+        console.info(`...Unbaned user ID: ${userId}`);
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 module.exports = {
   bot,
@@ -43,4 +56,5 @@ module.exports = {
   getStatusInChannel,
   lineProduct,
   lineNextPayment,
+  whitelistUser,
 };

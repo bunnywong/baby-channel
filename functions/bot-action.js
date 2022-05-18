@@ -5,7 +5,7 @@ bot.action(/unsubscribe_+/, async (ctx) => {
   const subscribeId = ctx.match.input.substr('unsubscribe_'.length);
   const unsubscribe = await stripe.subscriptions.del(subscribeId);
   if (unsubscribe.status === 'canceled') {
-    return await ctx.editMessageText('✅ UNSUBSCRIBED');
+    return await ctx.editMessageText('✅ Canceled subscription');
   }
   await ctx.reply('⚠️ Not able to unsubscribe');
 });

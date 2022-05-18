@@ -84,7 +84,6 @@ bot.hears('STATUS', async (ctx) => {
     const product = await stripe.products.retrieve(sub?.plan?.product);
     const price = await stripe.prices.retrieve(product?.default_price);
     const invoice = await stripe.invoices.retrieve(sub?.latest_invoice);
-
     // text content
     let statusText = lineProduct(product);
     statusText += linePrice(price);
@@ -93,9 +92,16 @@ bot.hears('STATUS', async (ctx) => {
     return await ctx.replyWithMarkdown(
       statusText,
       Markup.inlineKeyboard([
-        [Markup.button.url('📁 Receipt', invoice?.hosted_invoice_url)],
-        [Markup.button.url('📝 update billing info', session?.url)],
-        [Markup.button.callback('⏹️ Unsubscribe', `unsubscribe_${sub?.id}`)],
+        [
+          Markup.button.url('📁 Receipt', invoice?.hosted_invoice_url),
+          Markup.button.url('📝 Update Billing', session?.url),
+        ],
+        [
+          Markup.button.callback(
+            '⏹️ Cancel Subscription',
+            `unsubscribe_${sub?.id}`,
+          ),
+        ],
         // @TODO: channel link
       ]),
     );

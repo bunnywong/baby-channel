@@ -1,6 +1,7 @@
 const {SUPPORT_TEXT} = process.env;
 const {Markup} = require('telegraf');
 const {get} = require('lodash');
+const {btnJoinChannel} = require('./bot-keyboards');
 const {
   bot,
   stripe,
@@ -30,8 +31,9 @@ const handleSubscriptionCreated = async (response, data) => {
     name: `user ID: ${userId}`,
     expire_date: data?.canceled_at, // @TODO: check
   });
+  const inviteLink = inviteLinkData?.invite_link;
   const invoice = await stripe.invoices.retrieve(data?.latest_invoice);
-  if (inviteLinkData?.invite_link && invoice.hosted_invoice_url) {
+  if (inviteLink && invoice.hosted_invoice_url) {
     whitelistUser(channelId, userId);
     let text = 'Your subscription is ACTIVE\n';
     text += lineNextPayment(data);
@@ -40,7 +42,7 @@ const handleSubscriptionCreated = async (response, data) => {
       text,
       Markup.inlineKeyboard([
         Markup.button.url('📁 Invoice and Receipt', invoice.hosted_invoice_url),
-        Markup.button.url('🌟 Join Channel', inviteLinkData.invite_link),
+        btnJoinChannel(inviteLink),
       ]),
     );
   } else {

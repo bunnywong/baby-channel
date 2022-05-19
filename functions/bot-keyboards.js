@@ -18,4 +18,15 @@ const firebaseStripeKeyboard = Markup.inlineKeyboard([
   ),
 ]);
 
-module.exports = {commonKeyboard, langKeyboard, firebaseStripeKeyboard};
+const btnJoinChannel = (link) => {
+  if (link) {
+    return Markup.button.url('🌟 Join Channel', link);
+  }
+  return [];
+};
+module.exports = {
+  commonKeyboard,
+  langKeyboard,
+  firebaseStripeKeyboard,
+  btnJoinChannel,
+};

@@ -1,4 +1,4 @@
-const {CHANNEL_ID} = process.env;
+const {ADMIN_USER, CHANNEL_ID} = process.env;
 const {forEach, size} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
@@ -11,7 +11,6 @@ const {
   getStatusInChannel,
 } = require('./utils');
 const {commonKeyboard, langKeyboard} = require('./bot-keyboards');
-const ADMIN_USER = 'brothercar';
 
 // cmd: /start
 bot.command('/start', (ctx) => {

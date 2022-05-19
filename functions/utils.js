@@ -1,5 +1,5 @@
 const {Telegraf} = require('telegraf');
-const {toString, map, sort} = require('lodash');
+const {toString} = require('lodash');
 const dayjs = require('dayjs');
 const {BOT_TOKEN, STRIPE_TOKEN} = process.env;
 

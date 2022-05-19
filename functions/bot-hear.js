@@ -11,7 +11,7 @@ const {
   lineProduct,
   lineNextPayment,
 } = require('./utils');
-const {commonKeyboard} = require('./bot-keyboards');
+const {commonKeyboard, btnJoinChannel} = require('./bot-keyboards');
 const sessionEndpoints = {
   success_url: `${BASE_URL}/payment_success`,
   cancel_url: `${BASE_URL}/payment_cancel`,
@@ -101,8 +101,8 @@ bot.hears('STATUS', async (ctx) => {
             '⏹️ Cancel Subscription',
             `unsubscribe_${sub?.id}`,
           ),
+          btnJoinChannel(sub?.metadata?.inviteLink),
         ],
-        // @TODO: channel link
       ]),
     );
   });

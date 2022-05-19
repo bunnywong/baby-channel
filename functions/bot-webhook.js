@@ -45,6 +45,14 @@ const handleSubscriptionCreated = async (response, data) => {
         btnJoinChannel(inviteLink),
       ]),
     );
+    // update metadata
+    const subscriptionUpdate = await stripe.subscriptions.update(data?.id, {
+      metadata: {...data.metadata, inviteLink},
+    });
+    console.info(
+      '...Saved invite link to subscription metadata:',
+      subscriptionUpdate?.status,
+    );
   } else {
     let text = '⚠️ Not able to create channel invite link\n';
     text += `please contact ${SUPPORT_TEXT}`;

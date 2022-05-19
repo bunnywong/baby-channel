@@ -50,7 +50,7 @@ bot.hears('PLANS', async (ctx) => {
       },
     },
   });
-  return await ctx.replyWithMarkdown(
+  return await ctx.reply(
     planText,
     Markup.inlineKeyboard([Markup.button.url('💳 SUBSCRIBE', session?.url)]),
   );
@@ -68,7 +68,7 @@ bot.hears('STATUS', async (ctx) => {
   const textSubscribed = 'Purchased item as below:';
   const textNewCustom = "You don't have any subscription"; // eslint-disable-line
   const textStatus = userInSubscription.length ? textSubscribed : textNewCustom;
-  ctx.replyWithMarkdown(textStatus, commonKeyboard);
+  ctx.reply(textStatus, commonKeyboard);
   // plans combo message
   isTyping(ctx);
   // create link: edit billing info
@@ -89,7 +89,7 @@ bot.hears('STATUS', async (ctx) => {
     statusText += linePrice(price);
     statusText += lineChargeFrequency(price?.recurring);
     statusText += lineNextPayment(sub);
-    return await ctx.replyWithMarkdown(
+    return await ctx.reply(
       statusText,
       Markup.inlineKeyboard([
         [

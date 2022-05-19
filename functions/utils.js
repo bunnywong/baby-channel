@@ -22,7 +22,7 @@ const getStatusInChannel = async (channelId, userId) => {
   return 'haha';
 };
 const lineProduct = (product) => {
-  let text = `💎 **${product?.name}**\n`;
+  let text = `💎 ${product?.name}\n`;
   text += `${product?.description}\n`;
   text += '\n';
   return text;

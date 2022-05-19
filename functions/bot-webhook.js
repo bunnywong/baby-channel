@@ -55,8 +55,7 @@ const handleSubscriptionCreated = async (response, data) => {
     );
   } else {
     let text = '⚠️ Not able to create channel invite link\n';
-    text += `please contact ${SUPPORT_TEXT}`;
-    bot.telegram.sendMessage(userId, text);
+    bot.telegram.sendMessage(userId, text + SUPPORT_TEXT);
   }
   return await response.status(200).end();
 };

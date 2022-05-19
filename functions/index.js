@@ -4,8 +4,7 @@ require('./bot');
 const endpoints = require('./endpoints');
 // const _priceCode = 'price_1KwVE0GVMqzrNuvfiIhntx8J';
 // # ref URL:
-// https://akhromieiev.com/building-telegram-bot-with-firebase-cloud-functions-and-telegrafjs/
-// https://www.jscamp.app/docs/telegraf/telegraf00/
+// https://core.telegram.org/bots/api
 // # Telegraf
 // example - https://github.com/telegraf/telegraf/tree/bafef538c228db581352746539c7ccfacb099b64/docs/examples
 // # membership 101

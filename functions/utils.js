@@ -1,5 +1,5 @@
 const {Telegraf} = require('telegraf');
-const {toString} = require('lodash');
+const {toString, map, sort} = require('lodash');
 const dayjs = require('dayjs');
 const {BOT_TOKEN, STRIPE_TOKEN} = process.env;
 
@@ -46,6 +46,11 @@ const whitelistUser = async (channelId, userId) => {
     console.error(err);
   }
 };
+const randomArray = (arr) =>
+  arr
+    .map((value) => ({value, sort: Math.random()}))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({value}) => value);
 
 module.exports = {
   bot,
@@ -57,4 +62,5 @@ module.exports = {
   lineProduct,
   lineNextPayment,
   whitelistUser,
+  randomArray,
 };

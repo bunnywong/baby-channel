@@ -47,26 +47,12 @@ const contentProduct = async (productId) => {
   text += linePrice(price);
   text += lineChargeFrequency(price?.recurring);
   return price ? text : null;
-  return text;
 };
 const lineNextPayment = (data) => {
   const periodEndDate = dayjs
     .unix(data?.current_period_end)
     .format('YYYY.MM.DD');
   return `📆 Next payment on: ${periodEndDate}`;
-};
-const whitelistUser = async (channelId, userId) => {
-  try {
-    const userInChannelStatus = await getStatusInChannel(channelId, userId);
-    if (userInChannelStatus === 'kicked') {
-      const unbanMember = await bot.telegram.unbanChatMember(channelId, userId);
-      if (unbanMember) {
-        console.info(`...Unbaned user ID: ${userId}`);
-      }
-    }
-  } catch (err) {
-    console.error(err);
-  }
 };
 const randomArray = (arr) =>
   arr
@@ -83,6 +69,5 @@ module.exports = {
   getStatusInChannel,
   contentProduct,
   lineNextPayment,
-  whitelistUser,
   randomArray,
 };

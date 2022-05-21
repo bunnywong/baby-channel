@@ -1,4 +1,4 @@
-const {ADMIN_USER, CHANNEL_ID} = process.env;
+const {ADMIN_UID, CHANNEL_ID} = process.env;
 const {forEach, size} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
@@ -21,7 +21,7 @@ bot.command('/start', (ctx) => {
 });
 // cmd: /webhook_telegram
 bot.command('webhook_telegram', async (ctx) => {
-  if (getUsername(ctx) === ADMIN_USER) {
+  if (getUserId(ctx) === ADMIN_UID) {
     isTyping(ctx);
     const telegramWebhook = await ctx.telegram.getWebhookInfo();
     await ctx.reply(`Telegram webhook:\n${telegramWebhook?.url}`);
@@ -29,7 +29,7 @@ bot.command('webhook_telegram', async (ctx) => {
 });
 // cmd: /webhook_stripe
 bot.command('webhook_stripe', async (ctx) => {
-  if (getUsername(ctx) === ADMIN_USER) {
+  if (getUserId(ctx) === ADMIN_UID) {
     isTyping(ctx);
     const webhookEndpoints = await stripe.webhookEndpoints.list();
     const data = webhookEndpoints.data;

@@ -33,18 +33,20 @@ const banUser = async (channelId, userId) => {
     console.error(`...Not able to ban user with (either)empty ${textInfo}`);
     return;
   }
+  // fetch and ban
   try {
     const userInChannelStatus = await getStatusInChannel(channelId, userId);
     if (userInChannelStatus) {
       const banMember = await bot.telegram.banChatMember(channelId, userId);
-      if (banMember) {
+      if (banMember !== 'owner') {
         console.info(`...banned ${textInfo}`);
         return;
       }
       console.error(`...Not able to ban ${textInfo}`);
     }
-  } catch (err) {}
-  console.error(err);
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 // handler:

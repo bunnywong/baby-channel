@@ -13,7 +13,7 @@ bot.action(/confirm_unsubscribe_+/, async (ctx) => {
     [escUnsubscribe('No')],
     [
       Markup.button.callback(
-        "Yes I'm 100% sure",
+        "Yes I'm 100% sure", // eslint-disable-line
         `unsubscribe_process_${subscribeId}`,
       ),
     ],

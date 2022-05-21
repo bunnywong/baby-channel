@@ -1,5 +1,5 @@
 const {BASE_URL, CHANNEL_ID, PRODUCT_ID} = process.env;
-const {size, get, filter, forEach, upperCase} = require('lodash');
+const {size, get, filter, forEach} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
 const {
@@ -21,7 +21,7 @@ const sessionEndpoints = {
 bot.hears('PLANS', async (ctx) => {
   isTyping(ctx);
   const product = await stripe.products.retrieve(PRODUCT_ID);
-  let text = await contentProduct(PRODUCT_ID);
+  const text = await contentProduct(PRODUCT_ID);
 
   const session = await stripe.checkout.sessions.create({
     ...sessionEndpoints,
@@ -69,8 +69,6 @@ bot.hears('STATUS', async (ctx) => {
   });
   isTyping(ctx);
   forEach(userInSubscription, async (sub) => {
-    const product = await stripe.products.retrieve(sub?.plan?.product);
-    const price = await stripe.prices.retrieve(product?.default_price);
     const invoice = await stripe.invoices.retrieve(sub?.latest_invoice);
     // text content
     let statusText = await contentProduct(sub?.plan?.product);

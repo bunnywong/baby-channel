@@ -2,9 +2,9 @@ const {isEmpty} = require('lodash');
 const {
   handleSubscriptionCreated,
   handleSubscriptionDeleted,
-} = require('./bot-webhook');
+} = require('./bot-webhook-handle');
 
-// utils
+// helpers
 const setHtml = (content) => {
   let bodyStyle = 'color: white; font-family: system-ui;display: ';
   bodyStyle += 'flex; align-items: center; justify-content: center;';

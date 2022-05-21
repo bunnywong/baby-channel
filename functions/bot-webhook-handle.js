@@ -1,20 +1,64 @@
 const {SUPPORT_TEXT} = process.env;
 const {Markup} = require('telegraf');
-const {get} = require('lodash');
+const {get, isEmpty} = require('lodash');
 const {btnJoinChannel} = require('./bot-keyboards');
 const {
   bot,
   stripe,
   lineNextPayment,
-  whitelistUser,
   contentProduct,
+  getStatusInChannel,
 } = require('./utils');
 
-const handleSubscriptionDeleted = async (response, data) => {
-  const productId = get(data, 'plan.product', false);
-  const userId = data?.metadata?.userId;
+// helper
+const whitelistUser = async (channelId, userId) => {
+  try {
+    const userInChannelStatus = await getStatusInChannel(channelId, userId);
+    if (userInChannelStatus === 'kicked') {
+      const unbanMember = await bot.telegram.unbanChatMember(channelId, userId);
+      const textInfo = `user ID: ${userId} of channel ID[${channelId}]`;
+      if (unbanMember) {
+        console.info(`...Unbaned ${textInfo}`);
+        return;
+      }
+      console.error(`...Not able to unban ${textInfo}`);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+const banUser = async (channelId, userId) => {
+  const textInfo = `user ID: ${userId} of channel ID[${channelId}]`;
+  if (isEmpty(channelId) || isEmpty(userId)) {
+    console.error(`...Not able to ban user with (either)empty ${textInfo}`);
+    return;
+  }
+  try {
+    const userInChannelStatus = await getStatusInChannel(channelId, userId);
+    if (userInChannelStatus) {
+      const banMember = await bot.telegram.banChatMember(channelId, userId);
+      if (banMember) {
+        console.info(`...banned ${textInfo}`);
+        return;
+      }
+      console.error(`...Not able to ban ${textInfo}`);
+    }
+  } catch (err) {}
+  console.error(err);
+};
 
-  if (data?.status === 'canceled' && productId) {
+// handler:
+const handleSubscriptionDeleted = async (response, data) => {
+  if (data?.status !== 'canceled') {
+    return await response.status(203).end();
+  }
+  const productId = get(data, 'plan.product', false);
+  const channelId = get(data, 'metadata.channelId', false);
+  const userId = data?.metadata?.userId;
+  // 1. kick user from channel
+  banUser(channelId, userId);
+  // 2. reply message for warm remind: unsubscribed
+  if (productId) {
     const product = await stripe.products.retrieve(productId);
     const price = await stripe.prices.retrieve(product?.default_price);
     let text = '🔔 Your subscription was canceled successfully.\n';
@@ -36,7 +80,7 @@ const handleSubscriptionCreated = async (response, data) => {
   const invoice = await stripe.invoices.retrieve(data?.latest_invoice);
   if (inviteLink && invoice.hosted_invoice_url) {
     whitelistUser(channelId, userId);
-    let text = 'Your subscription is ACTIVE\n';
+    let text = '🎉 Your subscription is ACTIVE\n';
     text += lineNextPayment(data);
     bot.telegram.sendMessage(
       userId,

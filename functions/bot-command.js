@@ -52,12 +52,13 @@ bot.command('webhook_stripe', async (ctx) => {
   }
 });
 // cmd: /who
+bot.command('status', async (ctx) => {
+  isTyping(ctx);
+  const statusInChannel = await getStatusInChannel(CHANNEL_ID, getUserId(ctx));
+  ctx.reply(statusInChannel, commonKeyboard);
+});
 bot.command('who', async (ctx) => {
   isTyping(ctx);
-  const status = await getStatusInChannel(CHANNEL_ID, getUserId(ctx));
-  if (status === 'kicked') {
-    ctx.reply('Removed from channel');
-  }
   const usernamneText = getUsername(ctx) ? `@${getUsername(ctx)}` : '⚠️ NULL';
   let message = `User ID: ${getUserId(ctx)}\n`;
   message += `Username: ${usernamneText}`;

@@ -53,7 +53,7 @@ const lineNextPayment = (data) => {
   const periodEndDate = dayjs
     .unix(data?.current_period_end)
     .format('YYYY.MM.DD');
-  return `ℹ️ Next payment on: ${periodEndDate}`;
+  return `📆 Next payment on: ${periodEndDate}`;
 };
 const whitelistUser = async (channelId, userId) => {
   try {

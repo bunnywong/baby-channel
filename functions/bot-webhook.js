@@ -7,7 +7,7 @@ const {
   stripe,
   lineNextPayment,
   whitelistUser,
-  lineProduct,
+  contentProduct,
 } = require('./utils');
 
 const handleSubscriptionDeleted = async (response, data) => {
@@ -16,9 +16,10 @@ const handleSubscriptionDeleted = async (response, data) => {
 
   if (data?.status === 'canceled' && productId) {
     const product = await stripe.products.retrieve(productId);
-    let text = 'Your subscription was canceled successfully.\n';
-    text += 'You will not be charged again for this subscription:\n\n';
-    text += lineProduct(product);
+    const price = await stripe.prices.retrieve(product?.default_price);
+    let text = '🔔 Your subscription was canceled successfully.\n';
+    text += 'You will not be charged again for below subscription:\n\n';
+    text += contentProduct(price?.recurring);
     bot.telegram.sendMessage(userId, text);
   }
   return await response.status(200).end();

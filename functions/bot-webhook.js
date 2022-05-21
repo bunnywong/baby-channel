@@ -29,7 +29,7 @@ const handleSubscriptionCreated = async (response, data) => {
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
     member_limit: 1,
     name: `user ID: ${userId}`,
-    expire_date: data?.canceled_at, // @TODO: check
+    expire_date: data.current_period_end,
   });
   const inviteLink = inviteLinkData?.invite_link;
   const invoice = await stripe.invoices.retrieve(data?.latest_invoice);
@@ -45,7 +45,7 @@ const handleSubscriptionCreated = async (response, data) => {
         btnJoinChannel(inviteLink),
       ]),
     );
-    // update metadata
+    // update metadata with invite link
     const subscriptionUpdate = await stripe.subscriptions.update(data?.id, {
       metadata: {...data.metadata, inviteLink},
     });

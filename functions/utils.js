@@ -1,5 +1,5 @@
 const {Telegraf} = require('telegraf');
-const {toString} = require('lodash');
+const {toString, upperCase} = require('lodash');
 const dayjs = require('dayjs');
 const {BOT_TOKEN, STRIPE_TOKEN} = process.env;
 
@@ -19,19 +19,41 @@ const getStatusInChannel = async (channelId, userId) => {
   } catch (err) {
     console.error(err);
   }
-  return 'haha';
 };
+// internal
 const lineProduct = (product) => {
   let text = `💎 ${product?.name}\n`;
   text += `${product?.description}\n`;
   text += '\n';
   return text;
 };
+// internal
+const linePrice = (price) => {
+  const currency = upperCase(price?.currency);
+  const amount = price.unit_amount / price.unit_amount_decimal;
+  return `Price: ${upperCase(currency)}${amount.toFixed(2)}\n`;
+};
+// internal
+const lineChargeFrequency = (recurring) => {
+  const intervalCount = recurring?.interval_count;
+  const interval = recurring?.interval;
+  return `Charge frequency: ${intervalCount} ${interval}\n`;
+};
+const contentProduct = async (productId) => {
+  const product = await stripe.products.retrieve(productId);
+  const price = await stripe.prices.retrieve(product?.default_price);
+
+  let text = lineProduct(product);
+  text += linePrice(price);
+  text += lineChargeFrequency(price?.recurring);
+  return price ? text : null;
+  return text;
+};
 const lineNextPayment = (data) => {
   const periodEndDate = dayjs
     .unix(data?.current_period_end)
     .format('YYYY.MM.DD');
-  return `Next payment on: ${periodEndDate}`;
+  return `ℹ️ Next payment on: ${periodEndDate}`;
 };
 const whitelistUser = async (channelId, userId) => {
   try {
@@ -59,7 +81,7 @@ module.exports = {
   getUsername,
   getUserId,
   getStatusInChannel,
-  lineProduct,
+  contentProduct,
   lineNextPayment,
   whitelistUser,
   randomArray,

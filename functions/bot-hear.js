@@ -1,5 +1,5 @@
 const {BASE_URL, CHANNEL_ID, PRODUCT_ID} = process.env;
-const {get, filter, forEach, upperCase} = require('lodash');
+const {size, get, filter, forEach, upperCase} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
 const {
@@ -8,7 +8,7 @@ const {
   getUsername,
   getUserId,
   isTyping,
-  lineProduct,
+  contentProduct,
   lineNextPayment,
 } = require('./utils');
 const {commonKeyboard, btnJoinChannel} = require('./bot-keyboards');
@@ -17,26 +17,11 @@ const sessionEndpoints = {
   cancel_url: `${BASE_URL}/payment_cancel`,
 };
 
-const linePrice = (price) => {
-  const currency = upperCase(price?.currency);
-  const amount = price.unit_amount / price.unit_amount_decimal;
-  return `Price: ${upperCase(currency)}${amount.toFixed(2)}\n`;
-};
-const lineChargeFrequency = (recurring) => {
-  const intervalCount = recurring?.interval_count;
-  const interval = recurring?.interval;
-  return `Charge frequency: ${intervalCount} ${interval}\n`;
-};
-// LHS: plans
+// 1. plans
 bot.hears('PLANS', async (ctx) => {
   isTyping(ctx);
-  // fetch Stripe
   const product = await stripe.products.retrieve(PRODUCT_ID);
-  const price = await stripe.prices.retrieve(product?.default_price);
-  // plan content
-  let planText = lineProduct(product);
-  planText += linePrice(price);
-  planText += lineChargeFrequency(price?.recurring);
+  let text = await contentProduct(PRODUCT_ID);
 
   const session = await stripe.checkout.sessions.create({
     ...sessionEndpoints,
@@ -51,11 +36,11 @@ bot.hears('PLANS', async (ctx) => {
     },
   });
   return await ctx.reply(
-    planText,
+    text,
     Markup.inlineKeyboard([Markup.button.url('💳 SUBSCRIBE', session?.url)]),
   );
 });
-// RHS: status
+// 2.: status
 bot.hears('STATUS', async (ctx) => {
   isTyping(ctx);
   const subscriptions = await stripe.subscriptions.list();
@@ -65,7 +50,10 @@ bot.hears('STATUS', async (ctx) => {
     const isActive = sub?.status === 'active';
     return isCurrentUser && isActive;
   });
-  const textSubscribed = 'Purchased item as below:';
+  const textItem = size(userInSubscription) > 1 ? 'items' : 'item';
+  const textSubscribed = `📮 You have subscribed ${size(
+    userInSubscription,
+  )} ${textItem} as below:`;
   const textNewCustom = "You don't have any subscription"; // eslint-disable-line
   const textStatus = userInSubscription.length ? textSubscribed : textNewCustom;
   ctx.reply(textStatus, commonKeyboard);
@@ -85,10 +73,8 @@ bot.hears('STATUS', async (ctx) => {
     const price = await stripe.prices.retrieve(product?.default_price);
     const invoice = await stripe.invoices.retrieve(sub?.latest_invoice);
     // text content
-    let statusText = lineProduct(product);
-    statusText += linePrice(price);
-    statusText += lineChargeFrequency(price?.recurring);
-    statusText += lineNextPayment(sub);
+    let statusText = await contentProduct(sub?.plan?.product);
+    statusText += await lineNextPayment(sub);
     return await ctx.reply(
       statusText,
       Markup.inlineKeyboard([
@@ -99,7 +85,7 @@ bot.hears('STATUS', async (ctx) => {
         [
           Markup.button.callback(
             '⏹️ Cancel Subscription',
-            `unsubscribe_${sub?.id}`,
+            `confirm_unsubscribe_${sub?.id}`,
           ),
           btnJoinChannel(sub?.metadata?.inviteLink),
         ],

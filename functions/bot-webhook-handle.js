@@ -12,11 +12,16 @@ const {
 
 // helper
 const whitelistUser = async (channelId, userId) => {
+  const textInfo = `user ID: ${userId} of channel ID[${channelId}]`;
+  if (isEmpty(channelId) || isEmpty(userId)) {
+    console.error(`...Not able to unban user with (either)empty ${textInfo}`);
+    return;
+  }
+  // fetch and unban
   try {
     const userInChannelStatus = await getStatusInChannel(channelId, userId);
     if (userInChannelStatus === 'kicked') {
       const unbanMember = await bot.telegram.unbanChatMember(channelId, userId);
-      const textInfo = `user ID: ${userId} of channel ID[${channelId}]`;
       if (unbanMember) {
         console.info(`...Unbaned ${textInfo}`);
         return;
@@ -65,7 +70,7 @@ const handleSubscriptionDeleted = async (response, data) => {
     const price = await stripe.prices.retrieve(product?.default_price);
     let text = '🔔 Your subscription was canceled successfully.\n';
     text += 'You will not be charged again for below subscription:\n\n';
-    text += contentProduct(price?.recurring);
+    text += await contentProduct(price?.recurring);
     bot.telegram.sendMessage(userId, text);
   }
   return await response.status(200).end();

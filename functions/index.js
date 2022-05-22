@@ -5,8 +5,9 @@ const endpoints = require('./endpoints');
 
 module.exports = {
   bot: functions.https.onRequest(async (request, response) => {
+    const bodyData = {...request?.body, ...request?.query};
     try {
-      bot.handleUpdate(request.body, response);
+      bot.handleUpdate(bodyData, response);
     } finally {
       await response.status(200).end('hello bot');
     }

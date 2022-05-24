@@ -12,7 +12,6 @@ const {
 } = require('./utils');
 const {getChannelIds} = require('./services');
 const {commonKeyboard, langKeyboard} = require('./bot-keyboards');
-const {getChannels} = require('./services');
 
 // cmd: /start
 bot.command('/start', (ctx) => {
@@ -57,7 +56,7 @@ bot.command('webhook_stripe', async (ctx) => {
 bot.command('status', async (ctx) => {
   isTyping(ctx);
   const channelIds = await getChannelIds(ctx.update?.bot_id);
-  const channelId = head(channelIds);
+  const channelId = head(channelIds); // set multi
   const statusInChannel = await getStatusInChannel(channelId, getUserId(ctx));
   ctx.reply(statusInChannel, commonKeyboard);
 });

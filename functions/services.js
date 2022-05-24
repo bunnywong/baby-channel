@@ -1,6 +1,6 @@
 const {DATABASE} = process.env;
 const fs = require('firebase-admin');
-const {get, keys} = require('lodash');
+const {map} = require('lodash');
 const serviceAccount = require('./service-account.json');
 
 fs.initializeApp({
@@ -14,7 +14,11 @@ const getBotdata = async (botId) => {
 };
 const getChannelIds = async (botId) => {
   const channelData = await getChannels(botId);
-  return keys(get(channelData, '[0]')); // @TODO: enable multi
+  const ids = [];
+  map(channelData, (val) => {
+    ids.push(val?.channel_id);
+  });
+  return ids;
 };
 const getChannels = async (botId) => {
   const snapshot = await db
@@ -27,7 +31,7 @@ const getChannels = async (botId) => {
   }
   let result = [];
   snapshot.forEach((doc) => {
-    const data = {[doc.id]: doc.data()};
+    const data = {channel_id: doc.id, ...doc.data()};
     result.push(data);
   });
   return result;

@@ -37,6 +37,7 @@ bot.action(/unsubscribe_process_+/, async (ctx) => {
   }
   await ctx.reply('⚠️ Not able to unsubscribe');
 });
+// 3. del Stripe webhook
 bot.action(/del_stripeWebhook_+/, async (ctx) => {
   const removeId = ctx.match.input.substr('del_stripeWebhook_'.length);
   const removement = await stripe.webhookEndpoints.del(removeId);

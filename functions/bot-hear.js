@@ -1,5 +1,5 @@
-const {BASE_URL, CHANNEL_ID, PRODUCT_ID} = process.env;
-const {size, get, filter, forEach} = require('lodash');
+const {BASE_URL, PRODUCT_ID} = process.env;
+const {size, get, filter, forEach, head} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
 const {
@@ -11,6 +11,7 @@ const {
   contentProduct,
   lineNextPayment,
 } = require('./utils');
+const {getChannelIds} = require('./services');
 const {commonKeyboard, btnJoinChannel} = require('./bot-keyboards');
 const sessionEndpoints = {
   success_url: `${BASE_URL}/payment_success`,
@@ -22,14 +23,15 @@ bot.hears('PLANS', async (ctx) => {
   isTyping(ctx);
   const product = await stripe.products.retrieve(PRODUCT_ID);
   const text = await contentProduct(PRODUCT_ID);
-
+  const channelIds = await getChannelIds(ctx.update?.bot_id);
+  const channelId = head(channelIds); // @TODO: set multi
   const session = await stripe.checkout.sessions.create({
     ...sessionEndpoints,
     line_items: [{price: product?.default_price, quantity: 1}],
     mode: 'subscription',
     subscription_data: {
       metadata: {
-        channelId: CHANNEL_ID,
+        channelId,
         userId: getUserId(ctx),
         username: getUsername(ctx),
       },

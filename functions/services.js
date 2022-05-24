@@ -1,5 +1,6 @@
 const {DATABASE} = process.env;
 const fs = require('firebase-admin');
+const {get, keys} = require('lodash');
 const serviceAccount = require('./service-account.json');
 
 fs.initializeApp({
@@ -7,24 +8,33 @@ fs.initializeApp({
 });
 const db = fs.firestore();
 
-const getData = async (ref) => {
-  const doc = await ref.get();
-  return doc.exists ? doc.data() : null;
+const getBotdata = async (botId) => {
+  const snapshot = await db.collection(DATABASE).doc(botId).get();
+  return snapshot.exists ? snapshot.data() : null;
 };
-const getBotInfo = async (botId) => {
-  const botRef = db.collection(DATABASE).doc(botId);
-  return await getData(botRef);
+const getChannelIds = async (botId) => {
+  const channelData = await getChannels(botId);
+  return keys(get(channelData, '[0]')); // @TODO: enable multi
 };
-const getChannelInfo = async (botId, channelId) => {
-  const botRef = db
+const getChannels = async (botId) => {
+  const snapshot = await db
     .collection(DATABASE)
     .doc(botId)
     .collection('channels')
-    .doc(channelId);
-  return await getData(botRef);
+    .get();
+  if (snapshot.empty) {
+    return null;
+  }
+  let result = [];
+  snapshot.forEach((doc) => {
+    const data = {[doc.id]: doc.data()};
+    result.push(data);
+  });
+  return result;
 };
 
 module.exports = {
-  getBotInfo,
-  getChannelInfo,
+  getBotdata,
+  getChannels,
+  getChannelIds,
 };

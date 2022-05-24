@@ -1,5 +1,5 @@
-const {ADMIN_UID, CHANNEL_ID} = process.env;
-const {forEach, size} = require('lodash');
+const {ADMIN_UID} = process.env;
+const {forEach, size, head} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
 const {
@@ -10,7 +10,9 @@ const {
   getUserId,
   getStatusInChannel,
 } = require('./utils');
+const {getChannelIds} = require('./services');
 const {commonKeyboard, langKeyboard} = require('./bot-keyboards');
+const {getChannels} = require('./services');
 
 // cmd: /start
 bot.command('/start', (ctx) => {
@@ -54,7 +56,9 @@ bot.command('webhook_stripe', async (ctx) => {
 // cmd: /who
 bot.command('status', async (ctx) => {
   isTyping(ctx);
-  const statusInChannel = await getStatusInChannel(CHANNEL_ID, getUserId(ctx));
+  const channelIds = await getChannelIds(ctx.update?.bot_id);
+  const channelId = head(channelIds);
+  const statusInChannel = await getStatusInChannel(channelId, getUserId(ctx));
   ctx.reply(statusInChannel, commonKeyboard);
 });
 bot.command('who', async (ctx) => {

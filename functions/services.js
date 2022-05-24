@@ -29,7 +29,7 @@ const getChannels = async (botId) => {
   if (snapshot.empty) {
     return null;
   }
-  let result = [];
+  const result = [];
   snapshot.forEach((doc) => {
     const data = {channel_id: doc.id, ...doc.data()};
     result.push(data);

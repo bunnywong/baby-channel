@@ -1,12 +1,12 @@
 const {DATABASE} = process.env;
-const fs = require('firebase-admin');
+const firebase = require('firebase-admin');
 const {map} = require('lodash');
 const serviceAccount = require('./service-account.json');
 
-fs.initializeApp({
-  credential: fs.credential.cert(serviceAccount),
+firebase.initializeApp({
+  credential: firebase.credential.cert(serviceAccount),
 });
-const db = fs.firestore();
+const db = firebase.firestore();
 
 const getBotdata = async (botId) => {
   const snapshot = await db.collection(DATABASE).doc(botId).get();

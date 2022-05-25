@@ -10,14 +10,12 @@ const {
   getStatusInChannel,
 } = require('./utils');
 const {getBotdata, getChannelIds} = require('./services');
-const {commonKeyboard, langKeyboard} = require('./bot-keyboards');
+const {commonKeyboard} = require('./bot-keyboards');
 
 // cmd: /start
 bot.command('/start', (ctx) => {
   isTyping(ctx);
-  // ctx.sesstion ??= {language: 'en'};
   ctx.reply('🎉 Welcome onboard 歡迎');
-  ctx.reply('Please select language 請選擇語言', langKeyboard);
 });
 // cmd: /webhook_telegram
 bot.command('webhook_telegram', async (ctx) => {

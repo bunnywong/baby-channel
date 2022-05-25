@@ -11,7 +11,7 @@ const {
   contentProduct,
   lineNextPayment,
 } = require('./utils');
-const {getChannelIds} = require('./services');
+const {getChannels} = require('./services');
 const {commonKeyboard, btnJoinChannel} = require('./bot-keyboards');
 const sessionEndpoints = {
   success_url: `${BASE_URL}/payment_success`,
@@ -21,26 +21,31 @@ const sessionEndpoints = {
 // 1. plans
 bot.hears('PLANS', async (ctx) => {
   isTyping(ctx);
-  const product = await stripe.products.retrieve(PRODUCT_ID);
-  const text = await contentProduct(PRODUCT_ID);
-  const channelIds = await getChannelIds(ctx.update?.bot_id);
-  const channelId = head(channelIds); // @TODO: set multi
-  const session = await stripe.checkout.sessions.create({
-    ...sessionEndpoints,
-    line_items: [{price: product?.default_price, quantity: 1}],
-    mode: 'subscription',
-    subscription_data: {
-      metadata: {
-        channelId,
-        userId: getUserId(ctx),
-        username: getUsername(ctx),
+  const botId = ctx.update?.bot_id;
+  const channelData = await getChannels(botId);
+  channelData.forEach(async (channel) => {
+    isTyping(ctx);
+    const product = await stripe.products.retrieve(channel?.stripe_product_id);
+    const text = await contentProduct(channel?.stripe_product_id);
+    // const channelIds = await getChannelIds(botId);
+    const channelId = head(channel?.channel_id); // @TODO: set multi
+    const session = await stripe.checkout.sessions.create({
+      ...sessionEndpoints,
+      line_items: [{price: product?.default_price, quantity: 1}],
+      mode: 'subscription',
+      subscription_data: {
+        metadata: {
+          channelId,
+          userId: getUserId(ctx),
+          username: getUsername(ctx),
+        },
       },
-    },
+    });
+    await ctx.reply(
+      text,
+      Markup.inlineKeyboard([Markup.button.url('💳 SUBSCRIBE', session?.url)]),
+    );
   });
-  return await ctx.reply(
-    text,
-    Markup.inlineKeyboard([Markup.button.url('💳 SUBSCRIBE', session?.url)]),
-  );
 });
 // 2.: status
 bot.hears('STATUS', async (ctx) => {

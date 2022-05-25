@@ -1,5 +1,5 @@
 const {BASE_URL} = process.env;
-const {size, get, filter, forEach, head} = require('lodash');
+const {size, get, filter, forEach} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
 const {
@@ -27,8 +27,7 @@ bot.hears('PLANS', async (ctx) => {
     isTyping(ctx);
     const product = await stripe.products.retrieve(channel?.stripe_product_id);
     const text = await contentProduct(channel?.stripe_product_id);
-    // const channelIds = await getChannelIds(botId);
-    const channelId = head(channel?.channel_id); // @TODO: set multi
+    const channelId = channel?.channel_id;
     const session = await stripe.checkout.sessions.create({
       ...sessionEndpoints,
       line_items: [{price: product?.default_price, quantity: 1}],

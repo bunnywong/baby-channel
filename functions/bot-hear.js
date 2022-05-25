@@ -1,4 +1,4 @@
-const {BASE_URL, PRODUCT_ID} = process.env;
+const {BASE_URL} = process.env;
 const {size, get, filter, forEach, head} = require('lodash');
 const {Markup} = require('telegraf');
 // custom

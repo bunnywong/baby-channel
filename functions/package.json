@@ -10,7 +10,7 @@
     "mirror": "ngrok http 5001",
     "deploy": "firebase deploy --only functions; yarn webhook:set",
     "webhook:info": "curl https://api.telegram.org/bot5198430850:AAHFhXUv_Z695lPcpay_gy9-O1BHVkhbEYg/getWebhookInfo",
-    "webhook:set": "curl https://api.telegram.org/bot5198430850:AAHFhXUv_Z695lPcpay_gy9-O1BHVkhbEYg/setWebhook?url=https://us-central1-signal-killer.cloudfunctions.net/bot",
+    "webhook:set": "curl https://api.telegram.org/bot5198430850:AAHFhXUv_Z695lPcpay_gy9-O1BHVkhbEYg/setWebhook?url=https://us-central1-signal-killer.cloudfunctions.net/bot?bot_id=5198430850",
     "webhook:get-update": "curl https://api.telegram.org/bot5198430850:AAHFhXUv_Z695lPcpay_gy9-O1BHVkhbEYg/getUpdates",
     "logs": "firebase functions:log"
   },

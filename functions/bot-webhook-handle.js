@@ -54,7 +54,7 @@ const banUser = async (channelId, userId) => {
   }
 };
 
-// handler:
+// 1. handler deleted
 const handleSubscriptionDeleted = async (response, data) => {
   if (data?.status !== 'canceled') {
     return await response.status(203).end();
@@ -62,9 +62,9 @@ const handleSubscriptionDeleted = async (response, data) => {
   const productId = get(data, 'plan.product', false);
   const channelId = get(data, 'metadata.channelId', false);
   const userId = data?.metadata?.userId;
-  // 1. kick user from channel
+  // 1.1 kick user from channel
   banUser(channelId, userId);
-  // 2. reply message for warm remind: unsubscribed
+  // 1.2 reply message for warm remind: unsubscribed
   if (productId) {
     const product = await stripe.products.retrieve(productId);
     const price = await stripe.prices.retrieve(product?.default_price);
@@ -79,6 +79,7 @@ const handleSubscriptionCreated = async (response, data) => {
   const userId = data.metadata?.userId;
   const channelId = data.metadata?.channelId;
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
+// 2. handler created
     member_limit: 1,
     name: `user ID: ${userId}`,
     expire_date: data.current_period_end,

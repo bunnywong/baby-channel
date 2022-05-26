@@ -112,8 +112,11 @@ const handleSubscriptionCreated = async (response, data) => {
   }
   return await response.status(200).end();
 };
+// 2. handler updated
+const handleSubscriptionUpdated = async (response, data) => {};
 
 module.exports = {
   handleSubscriptionDeleted,
   handleSubscriptionCreated,
+  handleSubscriptionUpdated,
 };

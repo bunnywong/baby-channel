@@ -2,6 +2,7 @@ const {isEmpty} = require('lodash');
 const {
   handleSubscriptionCreated,
   handleSubscriptionDeleted,
+  handleSubscriptionUpdated,
 } = require('./bot-webhook-handle');
 
 // helpers
@@ -37,6 +38,8 @@ const webhookStripe = async (request, response) => {
       return handleSubscriptionCreated(response, data);
     case 'customer.subscription.deleted':
       return handleSubscriptionDeleted(response, data);
+    case 'customer.subscription.updated':
+      return handleSubscriptionUpdated(response, data);
     default:
       return await response.status(203).end();
   }

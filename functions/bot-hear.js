@@ -79,20 +79,20 @@ bot.hears('STATUS', async (ctx) => {
     // text content
     let statusText = await contentProduct(sub?.plan?.product);
     statusText += await lineNextPayment(sub);
-    // keyboards:
-    // line one:
+
     let inlineRowOne = [];
+    // 2.11 line one:
     if (invoice?.hosted_invoice_url) {
       // button: Invoice
       inlineRowOne.push(
         Markup.button.url('📁 Receipt', invoice?.hosted_invoice_url),
       );
     }
+    // 2.12 button: Billing
     if (session?.url) {
-      // button: Billing
       inlineRowOne.push(Markup.button.url('📝 Update Billing', session?.url));
     }
-    // line two:
+    // 2.21 line two:
     let inlineRowTwo = [];
     // button: Cancel Subscription
     if (sub?.id) {
@@ -103,11 +103,11 @@ bot.hears('STATUS', async (ctx) => {
         ),
       );
     }
-    // button: invoite link
+    // 2.22 button: invoite link
     if (sub?.metadata?.inviteLink) {
       inlineRowTwo.push(btnJoinChannel(sub.metadata.inviteLink));
     }
-    // reply with keyboard
+
     return await ctx.reply(
       statusText,
       Markup.inlineKeyboard([inlineRowOne, inlineRowTwo]),

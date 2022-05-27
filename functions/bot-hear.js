@@ -79,21 +79,38 @@ bot.hears('STATUS', async (ctx) => {
     // text content
     let statusText = await contentProduct(sub?.plan?.product);
     statusText += await lineNextPayment(sub);
+    // keyboards:
+    // line one:
+    let inlineRowOne = [];
+    if (invoice?.hosted_invoice_url) {
+      // button: Invoice
+      inlineRowOne.push(
+        Markup.button.url('📁 Receipt', invoice?.hosted_invoice_url),
+      );
+    }
+    if (session?.url) {
+      // button: Billing
+      inlineRowOne.push(Markup.button.url('📝 Update Billing', session?.url));
+    }
+    // line two:
+    let inlineRowTwo = [];
+    // button: Cancel Subscription
+    if (sub?.id) {
+      inlineRowTwo.push(
+        Markup.button.callback(
+          '⏹️ Cancel Subscription',
+          `confirm_unsubscribe_${sub.id}`,
+        ),
+      );
+    }
+    // button: invoite link
+    if (sub?.metadata?.inviteLink) {
+      inlineRowTwo.push(btnJoinChannel(sub.metadata.inviteLink));
+    }
+    // reply with keyboard
     return await ctx.reply(
       statusText,
-      Markup.inlineKeyboard([
-        [
-          Markup.button.url('📁 Receipt', invoice?.hosted_invoice_url),
-          Markup.button.url('📝 Update Billing', session?.url),
-        ],
-        [
-          Markup.button.callback(
-            '⏹️ Cancel Subscription',
-            `confirm_unsubscribe_${sub?.id}`,
-          ),
-          btnJoinChannel(sub?.metadata?.inviteLink),
-        ],
-      ]),
+      Markup.inlineKeyboard([inlineRowOne, inlineRowTwo]),
     );
   });
 });

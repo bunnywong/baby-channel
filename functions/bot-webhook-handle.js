@@ -79,7 +79,7 @@ const handleSubscriptionCreated = async (response, data) => {
   const userId = data.metadata?.userId;
   const channelId = data.metadata?.channelId;
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
-// 2. handler created
+    // 2. handler created
     member_limit: 1,
     name: `user ID: ${userId}`,
     expire_date: data.current_period_end,

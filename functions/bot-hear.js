@@ -81,7 +81,7 @@ bot.hears('STATUS', async (ctx) => {
     statusText += await lineNextPayment(sub);
     statusText += `@DEBUG: Invoice status: ${invoice.status.toUpperCase()}`;
 
-    let inlineRowOne = [];
+    const inlineRowOne = [];
     // 2.11 line one:
     if (invoice?.hosted_invoice_url) {
       // button: Invoice
@@ -94,7 +94,7 @@ bot.hears('STATUS', async (ctx) => {
       inlineRowOne.push(Markup.button.url('📝 Update Billing', session?.url));
     }
     // 2.21 line two:
-    let inlineRowTwo = [];
+    const inlineRowTwo = [];
     // button: Cancel Subscription
     if (sub?.id) {
       inlineRowTwo.push(

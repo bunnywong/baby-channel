@@ -79,6 +79,7 @@ bot.hears('STATUS', async (ctx) => {
     // text content
     let statusText = await contentProduct(sub?.plan?.product);
     statusText += await lineNextPayment(sub);
+    statusText += `@DEBUG: Invoice status: ${invoice.status.toUpperCase()}`;
 
     let inlineRowOne = [];
     // 2.11 line one:

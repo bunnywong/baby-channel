@@ -52,7 +52,7 @@ const lineNextPayment = (data) => {
   const periodEndDate = dayjs
     .unix(data?.current_period_end)
     .format('YYYY.MM.DD');
-  return `📆 Next payment on: ${periodEndDate}`;
+  return `📆 Next payment on: ${periodEndDate}\n`;
 };
 const randomArray = (arr) =>
   arr

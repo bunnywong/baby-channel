@@ -1,6 +1,7 @@
 const {BASE_URL} = process.env;
 const {size, get, filter, forEach} = require('lodash');
 const {Markup} = require('telegraf');
+const dayjs = require('dayjs');
 // custom
 const {
   bot,
@@ -77,8 +78,10 @@ bot.hears('STATUS', async (ctx) => {
   forEach(userInSubscription, async (sub) => {
     const invoice = await stripe.invoices.retrieve(sub?.latest_invoice);
     // text content
+    const dateCreated = dayjs(sub.created * 1000).format('YYYY.MM.DD');
     let statusText = await contentProduct(sub?.plan?.product);
     statusText += await lineNextPayment(sub);
+    statusText += `@DEBUG: created: ${dateCreated}\n`;
     statusText += `@DEBUG: Invoice status: ${invoice.status.toUpperCase()}`;
 
     const inlineRowOne = [];

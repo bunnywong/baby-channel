@@ -12,22 +12,16 @@ const {
 const {getBotdata, getChannelIds} = require('./services');
 const {commonKeyboard} = require('./bot-keyboards');
 
-// cmd: /start
-bot.command('/start', (ctx) => {
-  isTyping(ctx);
-  ctx.reply('🎉 Welcome onboard 歡迎');
-});
-// cmd: /webhook_telegram
-bot.command('webhook_telegram', async (ctx) => {
+// helpers
+const getWebhookTelegram = async (ctx) => {
   const botData = await getBotdata(ctx.update?.bot_id);
   if (getUserId(ctx) === botData?.admin_uid) {
     isTyping(ctx);
     const telegramWebhook = await ctx.telegram.getWebhookInfo();
     await ctx.reply(`Telegram webhook:\n${telegramWebhook?.url}`);
   }
-});
-// cmd: /webhook_stripe
-bot.command('webhook_stripe', async (ctx) => {
+};
+const getWebhookStripe = async (ctx) => {
   const botData = await getBotdata(ctx.update?.bot_id);
   if (getUserId(ctx) === botData?.admin_uid) {
     isTyping(ctx);
@@ -50,6 +44,18 @@ bot.command('webhook_stripe', async (ctx) => {
       );
     });
   }
+};
+
+// commands:
+// cmd: /start
+bot.command('/start', (ctx) => {
+  isTyping(ctx);
+  ctx.reply('🎉 Welcome onboard 歡迎');
+});
+// cmd: /webhook_telegram
+bot.command('webhooks', async (ctx) => {
+  await getWebhookTelegram(ctx);
+  getWebhookStripe(ctx);
 });
 // cmd: /who
 bot.command('status', async (ctx) => {

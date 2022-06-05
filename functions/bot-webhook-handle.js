@@ -55,29 +55,7 @@ const banUser = async (channelId, userId) => {
   }
 };
 
-// 1. handler deleted
-const handleSubscriptionDeleted = async (response, data) => {
-  console.info('...webhook: customer.subscription.deleted');
-  if (data?.status !== 'canceled') {
-    return await response.status(203).end();
-  }
-  const productId = get(data, 'plan.product', false);
-  const channelId = get(data, 'metadata.channelId', false);
-  const userId = data?.metadata?.userId;
-  // 1.1 kick user from channel
-  banUser(channelId, userId);
-  // 1.2 reply message for warm remind: unsubscribed
-  if (productId) {
-    const product = await stripe.products.retrieve(productId);
-    const price = await stripe.prices.retrieve(product?.default_price);
-    let text = '🔔 Your subscription was canceled successfully.\n';
-    text += 'You will not be charged again for below subscription:\n\n';
-    text += await contentProduct(price?.recurring);
-    bot.telegram.sendMessage(userId, text);
-  }
-  return await response.status(200).end();
-};
-// 2. handler created
+// 1. handler created
 const handleSubscriptionCreated = async (response, data) => {
   console.info('...webhook: customer.subscription.created');
   const userId = data.metadata?.userId;
@@ -145,6 +123,29 @@ const handleSubscriptionUpdated = async (response, data) => {
     return;
   }
   console.log('...skipped invite link update');
+};
+
+// 4. handler deleted
+const handleSubscriptionDeleted = async (response, data) => {
+  console.info('...webhook: customer.subscription.deleted');
+  if (data?.status !== 'canceled') {
+    return await response.status(203).end();
+  }
+  const productId = get(data, 'plan.product', false);
+  const channelId = get(data, 'metadata.channelId', false);
+  const userId = data?.metadata?.userId;
+  // 1.1 kick user from channel
+  banUser(channelId, userId);
+  // 1.2 reply message for warm remind: unsubscribed
+  if (productId) {
+    const product = await stripe.products.retrieve(productId);
+    const price = await stripe.prices.retrieve(product?.default_price);
+    let text = '🔔 Your subscription was canceled successfully.\n';
+    text += 'You will not be charged again for below subscription:\n\n';
+    text += await contentProduct(price?.recurring);
+    bot.telegram.sendMessage(userId, text);
+  }
+  return await response.status(200).end();
 };
 
 module.exports = {

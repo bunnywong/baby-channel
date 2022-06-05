@@ -2,11 +2,15 @@ const {Markup} = require('telegraf');
 const {bot, stripe, randomArray} = require('./utils');
 
 require('./bot-action');
+// 0. subscribe
+bot.action(/subscribe_+/, async (ctx) => {});
+
 // 1. unsubscribe
-bot.action(/confirm_unsubscribe_+/, async (ctx) => {
-  const subscribeId = ctx.match.input.substr('confirm_unsubscribe_'.length);
+bot.action(/ask_unsub_+/, async (ctx) => {
+  console.info('...action/ask_unsub_');
+  const subscribeId = ctx.match.input.substr('ask_unsub_'.length);
   const escUnsubscribe = (text) =>
-    Markup.button.callback(text, 'unsubscribe_esc');
+    Markup.button.callback(text, 'cancel_unsubscribe');
   const buttons = [
     [escUnsubscribe('Nope, nevermind')],
     [escUnsubscribe('No No No!')],
@@ -14,7 +18,7 @@ bot.action(/confirm_unsubscribe_+/, async (ctx) => {
     [
       Markup.button.callback(
         "Yes I'm 100% sure", // eslint-disable-line
-        `unsubscribe_process_${subscribeId}`,
+        `do_unsub_${subscribeId}`,
       ),
     ],
   ];
@@ -24,13 +28,15 @@ bot.action(/confirm_unsubscribe_+/, async (ctx) => {
   );
 });
 // 2.1 unsubscribe: esc
-bot.action('unsubscribe_esc', async (ctx) => {
+bot.action('cancel_unsubscribe', async (ctx) => {
+  console.info('...action/cancel_unsubscribe');
   const text = '🔄 Your subscription was not cancelled, it still alive\n';
   return await ctx.editMessageText(text);
 });
 // 2.2 unsubscribe: process
-bot.action(/unsubscribe_process_+/, async (ctx) => {
-  const subscribeId = ctx.match.input.substr('process_unsubscribe_'.length);
+bot.action(/do_unsub_+/, async (ctx) => {
+  console.info('...action/do_unsub_');
+  const subscribeId = ctx.match.input.substr('do_unsub_'.length);
   const unsubscribe = await stripe.subscriptions.del(subscribeId);
   if (unsubscribe.status === 'canceled') {
     return await ctx.editMessageText('✅ Canceled subscription');
@@ -39,6 +45,7 @@ bot.action(/unsubscribe_process_+/, async (ctx) => {
 });
 // 3. del Stripe webhook
 bot.action(/del_stripeWebhook_+/, async (ctx) => {
+  console.info('...action: del_stripeWebhook_');
   const removeId = ctx.match.input.substr('del_stripeWebhook_'.length);
   const removement = await stripe.webhookEndpoints.del(removeId);
   if (removement?.deleted) {

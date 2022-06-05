@@ -104,7 +104,7 @@ bot.hears('STATUS', async (ctx) => {
       inlineRowTwo.push(
         Markup.button.callback(
           '⏹️ Cancel Subscription',
-          `confirm_unsubscribe_${sub.id}`,
+          `ask_unsub_${sub.id}`,
         ),
       );
     }

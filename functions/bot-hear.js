@@ -38,6 +38,7 @@ bot.hears('PLANS', async (ctx) => {
           channelId,
           userId: getUserId(ctx),
           username: getUsername(ctx),
+          last_update: dayjs().format('YYYY.MM.DD'),
         },
       },
     });

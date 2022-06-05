@@ -1,6 +1,7 @@
 const {SUPPORT_TEXT} = process.env;
 const {Markup} = require('telegraf');
-const {get, isEmpty} = require('lodash');
+const {size, get, isEmpty} = require('lodash');
+const dayjs = require('dayjs');
 const {btnJoinChannel} = require('./bot-keyboards');
 const {
   bot,
@@ -56,6 +57,7 @@ const banUser = async (channelId, userId) => {
 
 // 1. handler deleted
 const handleSubscriptionDeleted = async (response, data) => {
+  console.info('...webhook: customer.subscription.deleted');
   if (data?.status !== 'canceled') {
     return await response.status(203).end();
   }
@@ -75,11 +77,12 @@ const handleSubscriptionDeleted = async (response, data) => {
   }
   return await response.status(200).end();
 };
+// 2. handler created
 const handleSubscriptionCreated = async (response, data) => {
+  console.info('...webhook: customer.subscription.created');
   const userId = data.metadata?.userId;
   const channelId = data.metadata?.channelId;
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
-    // 2. handler created
     member_limit: 1,
     name: `user ID: ${userId}`,
     expire_date: data.current_period_end,
@@ -112,8 +115,37 @@ const handleSubscriptionCreated = async (response, data) => {
   }
   return await response.status(200).end();
 };
-// 2. handler updated
-const handleSubscriptionUpdated = async (response, data) => {};
+// 3. handler updated (not trigger by #2.deleted subscription)
+const handleSubscriptionUpdated = async (response, data) => {
+  console.info('...webhook: customer.subscription.updated');
+  if (data?.status !== 'active') {
+    return;
+  }
+  // update metadata channel invite link
+  const userId = data.metadata?.userId;
+  const channelId = data.metadata?.channelId;
+  const lastUpdate = data.metadata?.last_update;
+  const today = dayjs().format('YYYY.MM.DD');
+  const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
+    // 2. handler created
+    member_limit: 1,
+    name: `user ID: ${userId}`,
+    expire_date: data.current_period_end,
+  });
+  const inviteLink = inviteLinkData?.invite_link;
+  // the middle empty check for webhook fire order: `updated` > `created`
+  if (inviteLink && size(lastUpdate) && lastUpdate != today) {
+    const subscriptionUpdate = await stripe.subscriptions.update(data?.id, {
+      metadata: {...data.metadata, inviteLink, last_update: today},
+    });
+    console.info(
+      '...Updated invite link to subscription metadata:',
+      subscriptionUpdate?.status,
+    );
+    return;
+  }
+  console.log('...skipped invite link update');
+};
 
 module.exports = {
   handleSubscriptionDeleted,

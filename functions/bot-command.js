@@ -52,7 +52,6 @@ bot.command('/start', (ctx) => {
   if (!get(ctx, 'session.lang')) {
     set(ctx, 'session.lang', 'zh');
   }
-  ctx.session ??= {lang: 'en'};
   ctx.reply(t(ctx, 'welcome'));
 });
 bot.command('/en', (ctx) => {

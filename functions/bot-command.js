@@ -50,16 +50,21 @@ const getWebhookStripe = async (ctx) => {
 // commands:
 bot.command('/start', (ctx) => {
   if (!get(ctx, 'session.lang')) {
-    set(ctx, 'session.lang', 'zh');
+    const tgLang = get(ctx, 'update.message.from.language_code');
+    const lang = tgLang === 'zh' ? 'zh' : 'en';
+    set(ctx, 'session.lang', lang);
   }
   ctx.reply(t(ctx, 'welcome'));
 });
 bot.command('/en', (ctx) => {
-  ctx.session.lang = 'en';
+  set(ctx, 'session.lang', 'en');
   ctx.reply(t(ctx, 'currewnt_language'));
 });
 bot.command('/zh', (ctx) => {
-  ctx.session.lang = 'zh';
+  set(ctx, 'session.lang', 'zh');
+  ctx.reply(t(ctx, 'currewnt_language'));
+});
+bot.command('/lang', (ctx) => {
   ctx.reply(t(ctx, 'currewnt_language'));
 });
 bot.command('webhooks', async (ctx) => {

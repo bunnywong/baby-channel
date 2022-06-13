@@ -1,5 +1,5 @@
 const {Telegraf} = require('telegraf');
-const {toString, upperCase} = require('lodash');
+const {get, toString, upperCase} = require('lodash');
 const dayjs = require('dayjs');
 const {BOT_TOKEN, STRIPE_TOKEN} = process.env;
 
@@ -10,6 +10,12 @@ const Stripe = require('stripe');
 const stripe = new Stripe(STRIPE_TOKEN);
 
 const isTyping = (ctx) => ctx.telegram.sendChatAction(ctx?.chat?.id, 'typing');
+
+const t = (ctx, message) => {
+  const lang = get(ctx, 'session.lang', 'en');
+  ctx.i18n.locale(lang);
+  return ctx.i18n.t(message);
+};
 const getUsername = (ctx) => ctx?.update?.message?.chat?.username;
 const getUserId = (ctx) => toString(ctx?.update?.message?.from?.id);
 const getStatusInChannel = async (channelId, userId) => {
@@ -63,6 +69,7 @@ const randomArray = (arr) =>
 module.exports = {
   bot,
   stripe,
+  t,
   isTyping,
   getUsername,
   getUserId,

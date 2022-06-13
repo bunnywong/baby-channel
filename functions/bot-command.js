@@ -1,7 +1,8 @@
-const {forEach, size, head} = require('lodash');
+const {get, set, forEach, size, head} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
 const {
+  t,
   bot,
   stripe,
   isTyping,
@@ -47,17 +48,25 @@ const getWebhookStripe = async (ctx) => {
 };
 
 // commands:
-// cmd: /start
 bot.command('/start', (ctx) => {
-  isTyping(ctx);
-  ctx.reply('🎉 Welcome onboard 歡迎');
+  if (!get(ctx, 'session.lang')) {
+    set(ctx, 'session.lang', 'zh');
+  }
+  ctx.session ??= {lang: 'en'};
+  ctx.reply(t(ctx, 'welcome'));
 });
-// cmd: /webhook_telegram
+bot.command('/en', (ctx) => {
+  ctx.session.lang = 'en';
+  ctx.reply(t(ctx, 'currewnt_language'));
+});
+bot.command('/zh', (ctx) => {
+  ctx.session.lang = 'zh';
+  ctx.reply(t(ctx, 'currewnt_language'));
+});
 bot.command('webhooks', async (ctx) => {
   await getWebhookTelegram(ctx);
   getWebhookStripe(ctx);
 });
-// cmd: /who
 bot.command('status', async (ctx) => {
   isTyping(ctx);
   const channelIds = await getChannelIds(ctx.update?.bot_id);

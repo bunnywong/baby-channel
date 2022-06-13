@@ -1,3 +1,0 @@
-greeting: <b>Hello ${uppercase(from.first_name)}!</b>;
-welcome: 歡迎;
-currewnt_language: '當前語言: 中文';

@@ -1,5 +1,8 @@
 const {Markup} = require('telegraf');
-const {bot, stripe, randomArray} = require('./utils');
+const {set} = require('lodash');
+// custom
+const {bot, t, stripe, randomArray} = require('./utils');
+const {commonKeyboard} = require('./bot-keyboards');
 
 require('./bot-action');
 // 0. subscribe
@@ -55,8 +58,14 @@ bot.action(/del_stripeWebhook_+/, async (ctx) => {
   await ctx.reply('⚠️ Not able to delete webhook');
 });
 bot.action('english', async (ctx) => {
-  return ctx.reply('No problem');
+  setLanguage(ctx, 'en');
 });
 bot.action('chinese', async (ctx) => {
-  return ctx.reply('沒問題');
+  setLanguage(ctx, 'zh');
 });
+
+const setLanguage = async (ctx, lang) => {
+  await ctx.editMessageText(t(ctx, 'choose_language'));
+  await set(ctx, 'session.lang', lang);
+  await ctx.reply(t(ctx, 'current_language'), commonKeyboard(lang));
+};

@@ -11,7 +11,7 @@ const {
   getStatusInChannel,
 } = require('./utils');
 const {getBotdata, getChannelIds} = require('./services');
-const {commonKeyboard} = require('./bot-keyboards');
+const {commonKeyboard, langKeyboard} = require('./bot-keyboards');
 
 // helpers
 const getWebhookTelegram = async (ctx) => {
@@ -58,17 +58,10 @@ bot.command('/start', (ctx) => {
     set(ctx, 'session.lang', lang);
   }
   ctx.reply(t(ctx, 'welcome'), commonKeyboard(lang));
-});
-bot.command('/en', (ctx) => {
-  set(ctx, 'session.lang', 'en');
-  ctx.reply(t(ctx, 'currewnt_language'), commonKeyboard('en'));
-});
-bot.command('/zh', (ctx) => {
-  set(ctx, 'session.lang', 'zh');
-  ctx.reply(t(ctx, 'currewnt_language'), commonKeyboard('zh'));
+  ctx.reply(t(ctx, 'choose_language'), langKeyboard(lang));
 });
 bot.command('/lang', (ctx) => {
-  ctx.reply(t(ctx, 'currewnt_language'));
+  ctx.reply(t(ctx, 'current_language'));
 });
 bot.command('webhooks', async (ctx) => {
   await getWebhookTelegram(ctx);

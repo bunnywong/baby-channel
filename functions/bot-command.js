@@ -48,7 +48,7 @@ const getWebhookStripe = async (ctx) => {
 };
 
 // commands:
-bot.command('/start', (ctx) => {
+bot.command('/start', async (ctx) => {
   let tgLang = get(ctx, 'update.message.from.language_code');
   let lang = 'en';
   if (get(ctx, 'session.lang')) {
@@ -57,11 +57,12 @@ bot.command('/start', (ctx) => {
     lang = tgLang === 'zh' ? 'zh' : 'en';
     set(ctx, 'session.lang', lang);
   }
-  ctx.reply(t(ctx, 'welcome'), commonKeyboard(lang));
-  ctx.reply(t(ctx, 'choose_language'), langKeyboard(lang));
+  await ctx.reply(t(ctx, 'welcome'), commonKeyboard(lang));
+  await ctx.reply(t(ctx, 'choose_language'), langKeyboard(lang));
 });
-bot.command('/lang', (ctx) => {
-  ctx.reply(t(ctx, 'current_language'));
+bot.command('/lang', async (ctx) => {
+  await ctx.reply(t(ctx, 'current_language'));
+  await ctx.reply(t(ctx, 'choose_language'), langKeyboard());
 });
 bot.command('webhooks', async (ctx) => {
   await getWebhookTelegram(ctx);

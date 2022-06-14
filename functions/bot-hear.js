@@ -13,7 +13,7 @@ const {
   lineNextPayment,
 } = require('./utils');
 const {getChannels} = require('./services');
-const {commonKeyboard, btnJoinChannel} = require('./bot-keyboards');
+const {btnJoinChannel} = require('./bot-keyboards');
 const sessionEndpoints = {
   success_url: `${BASE_URL}/payment_success`,
   cancel_url: `${BASE_URL}/payment_cancel`,
@@ -64,7 +64,7 @@ bot.hears('STATUS', async (ctx) => {
   )} ${textItem} as below:`;
   const textNewCustom = "You don't have any subscription"; // eslint-disable-line
   const textStatus = userInSubscription.length ? textSubscribed : textNewCustom;
-  ctx.reply(textStatus, commonKeyboard);
+  ctx.reply(textStatus);
   // plans combo message
   isTyping(ctx);
   // create link: edit billing info

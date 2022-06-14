@@ -47,7 +47,7 @@ const getWebhookStripe = async (ctx) => {
   }
 };
 
-// commands:
+// public command:
 bot.command('/start', async (ctx) => {
   let tgLang = get(ctx, 'update.message.from.language_code');
   let lang = 'en';
@@ -60,7 +60,10 @@ bot.command('/start', async (ctx) => {
   await ctx.reply(t(ctx, 'welcome'), commonKeyboard(lang));
   await ctx.reply(t(ctx, 'choose_language'), langKeyboard(lang));
 });
+
+// private commands for dev only:
 bot.command('/lang', async (ctx) => {
+  // not able to confirm current language base on no keyboard ref
   await ctx.reply(t(ctx, 'current_language'));
   await ctx.reply(t(ctx, 'choose_language'), langKeyboard());
 });

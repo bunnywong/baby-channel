@@ -49,7 +49,7 @@ const getWebhookStripe = async (ctx) => {
 
 // public command:
 bot.command('/start', async (ctx) => {
-  let tgLang = get(ctx, 'update.message.from.language_code');
+  const tgLang = get(ctx, 'update.message.from.language_code');
   let lang = 'en';
   if (get(ctx, 'session.lang')) {
     lang = ctx.session.lang;

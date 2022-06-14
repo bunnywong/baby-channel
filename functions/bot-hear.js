@@ -1,10 +1,11 @@
 const {BASE_URL} = process.env;
-const {size, get, filter, forEach} = require('lodash');
+const {size, get, set, filter, forEach} = require('lodash');
 const {Markup} = require('telegraf');
 const dayjs = require('dayjs');
 // custom
 const {
   bot,
+  t,
   stripe,
   getUsername,
   getUserId,
@@ -21,6 +22,24 @@ const sessionEndpoints = {
 
 // 1. plans
 bot.hears('PLANS', async (ctx) => {
+  await set(ctx, 'session.lang', 'en');
+  handlePlans(ctx);
+});
+bot.hears('計劃', async (ctx) => {
+  await set(ctx, 'session.lang', 'zh');
+  handlePlans(ctx);
+});
+// 2.: status
+bot.hears('STATUS', async (ctx) => {
+  await set(ctx, 'session.lang', 'en');
+  await handleStatus(ctx);
+});
+bot.hears('狀態', async (ctx) => {
+  await set(ctx, 'session.lang', 'zh');
+  await handleStatus(ctx);
+});
+
+const handlePlans = async (ctx) => {
   isTyping(ctx);
   const botId = ctx.update?.bot_id;
   const channelData = await getChannels(botId);
@@ -44,12 +63,13 @@ bot.hears('PLANS', async (ctx) => {
     });
     await ctx.reply(
       text,
-      Markup.inlineKeyboard([Markup.button.url('💳 SUBSCRIBE', session?.url)]),
+      Markup.inlineKeyboard([
+        Markup.button.url(`💳 ${t(ctx, 'subscribe')}`, session?.url),
+      ]),
     );
   });
-});
-// 2.: status
-bot.hears('STATUS', async (ctx) => {
+};
+const handleStatus = async (ctx) => {
   isTyping(ctx);
   const subscriptions = await stripe.subscriptions.list();
   // filter out active subscribe for current user(as I/O result)
@@ -102,10 +122,7 @@ bot.hears('STATUS', async (ctx) => {
     // button: Cancel Subscription
     if (sub?.id) {
       inlineRowTwo.push(
-        Markup.button.callback(
-          '⏹️ Cancel Subscription',
-          `ask_unsub_${sub.id}`,
-        ),
+        Markup.button.callback('⏹️ Cancel Subscription', `ask_unsub_${sub.id}`),
       );
     }
     // 2.22 button: invoite link
@@ -118,4 +135,4 @@ bot.hears('STATUS', async (ctx) => {
       Markup.inlineKeyboard([inlineRowOne, inlineRowTwo]),
     );
   });
-});
+};

@@ -1,7 +1,7 @@
 const functions = require('firebase-functions');
 const {session} = require('telegraf');
 // custom
-const {bot, t} = require('./utils');
+const {bot} = require('./utils');
 
 // i18n:
 const TelegrafI18n = require('telegraf-i18n');

@@ -2,8 +2,9 @@ const {get, set, forEach, size, head} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
 const {
-  t,
   bot,
+  t,
+  getGeneralLang,
   stripe,
   isTyping,
   getUsername,
@@ -49,12 +50,8 @@ const getWebhookStripe = async (ctx) => {
 
 // public command:
 bot.command('/start', async (ctx) => {
-  const tgLang = get(ctx, 'update.message.from.language_code');
-  let lang = 'en';
-  if (get(ctx, 'session.lang')) {
-    lang = ctx.session.lang;
-  } else {
-    lang = tgLang === 'zh' ? 'zh' : 'en';
+  let lang = getGeneralLang(ctx);
+  if (!get(ctx, 'session.lang')) {
     set(ctx, 'session.lang', lang);
   }
   await ctx.reply(t(ctx, 'welcome'), commonKeyboard(lang));

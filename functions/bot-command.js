@@ -50,7 +50,7 @@ const getWebhookStripe = async (ctx) => {
 
 // public command:
 bot.command('/start', async (ctx) => {
-  let lang = getLang(ctx);
+  const lang = getLang(ctx);
   if (!get(ctx, 'session.lang')) {
     set(ctx, 'session.lang', lang);
   }

@@ -1,5 +1,5 @@
 const {Telegraf} = require('telegraf');
-const {get, toString, upperCase} = require('lodash');
+const {set, get, toString, upperCase} = require('lodash');
 const dayjs = require('dayjs');
 const {BOT_TOKEN, STRIPE_TOKEN} = process.env;
 
@@ -15,6 +15,13 @@ const t = (ctx, message) => {
   const lang = get(ctx, 'session.lang', 'en');
   ctx.i18n.locale(lang);
   return ctx.i18n.t(message);
+};
+const getGeneralLang = (ctx) => {
+  if (get(ctx, 'session.lang')) {
+    return ctx.session.lang;
+  }
+  const tgLang = get(ctx, 'update.message.from.language_code');
+  return tgLang === 'zh' ? 'zh' : 'en';
 };
 const getUsername = (ctx) => ctx?.update?.message?.chat?.username;
 const getUserId = (ctx) => toString(ctx?.update?.message?.from?.id);
@@ -70,6 +77,7 @@ module.exports = {
   bot,
   stripe,
   t,
+  getGeneralLang,
   isTyping,
   getUsername,
   getUserId,

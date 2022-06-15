@@ -63,12 +63,12 @@ bot.command('/start', async (ctx) => {
 
 // private commands for dev only:
 bot.command('/zh', async (ctx) => {
-  set(ctx, 'session.lang', 'zh');
-  await ctx.reply(t(ctx, 'current_language'));
+  await set(ctx, 'session.lang', 'zh');
+  await ctx.reply(t(ctx, 'current_language'), commonKeyboard('zh'));
 });
 bot.command('/en', async (ctx) => {
-  set(ctx, 'session.lang', 'en');
-  await ctx.reply(t(ctx, 'current_language'));
+  await set(ctx, 'session.lang', 'en');
+  await ctx.reply(t(ctx, 'current_language'), commonKeyboard('en'));
 });
 bot.command('/lang', async (ctx) => {
   // not able to confirm current language base on no keyboard ref

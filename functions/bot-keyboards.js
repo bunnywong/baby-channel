@@ -6,7 +6,7 @@ const commonKeyboard = (lang) => {
 };
 
 const langKeyboard = (currentLang) => {
-  const showChecked = (lang) => (currentLang === lang ? '✓' : '');
+  const showChecked = (lang) => (currentLang === lang ? ' ✓' : '');
   return Markup.inlineKeyboard([
     Markup.button.callback(`English ${showChecked('en')}`, 'english'),
     Markup.button.callback(`中文 ${showChecked('zh')}`, 'chinese'),

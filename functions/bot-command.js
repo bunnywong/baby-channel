@@ -62,6 +62,14 @@ bot.command('/start', async (ctx) => {
 });
 
 // private commands for dev only:
+bot.command('/zh', async (ctx) => {
+  set(ctx, 'session.lang', 'zh');
+  await ctx.reply(t(ctx, 'current_language'));
+});
+bot.command('/en', async (ctx) => {
+  set(ctx, 'session.lang', 'en');
+  await ctx.reply(t(ctx, 'current_language'));
+});
 bot.command('/lang', async (ctx) => {
   // not able to confirm current language base on no keyboard ref
   await ctx.reply(t(ctx, 'current_language'));

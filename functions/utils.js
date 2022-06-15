@@ -1,5 +1,5 @@
 const {Telegraf} = require('telegraf');
-const {set, get, toString, upperCase} = require('lodash');
+const {get, toString, upperCase} = require('lodash');
 const dayjs = require('dayjs');
 const {BOT_TOKEN, STRIPE_TOKEN} = process.env;
 
@@ -11,12 +11,13 @@ const stripe = new Stripe(STRIPE_TOKEN);
 
 const isTyping = (ctx) => ctx.telegram.sendChatAction(ctx?.chat?.id, 'typing');
 
+// translate: by session support
 const t = (ctx, message) => {
   const lang = get(ctx, 'session.lang', 'en');
   ctx.i18n.locale(lang);
   return ctx.i18n.t(message);
 };
-const getGeneralLang = (ctx) => {
+const getLang = (ctx) => {
   if (get(ctx, 'session.lang')) {
     return ctx.session.lang;
   }
@@ -77,7 +78,7 @@ module.exports = {
   bot,
   stripe,
   t,
-  getGeneralLang,
+  getLang,
   isTyping,
   getUsername,
   getUserId,

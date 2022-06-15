@@ -4,7 +4,7 @@ const {Markup} = require('telegraf');
 const {
   bot,
   t,
-  getGeneralLang,
+  getLang,
   stripe,
   isTyping,
   getUsername,
@@ -50,7 +50,7 @@ const getWebhookStripe = async (ctx) => {
 
 // public command:
 bot.command('/start', async (ctx) => {
-  let lang = getGeneralLang(ctx);
+  let lang = getLang(ctx);
   if (!get(ctx, 'session.lang')) {
     set(ctx, 'session.lang', lang);
   }

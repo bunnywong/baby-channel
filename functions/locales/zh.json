@@ -2,5 +2,9 @@
   "welcome": "歡迎",
   "current_language": "當前語言: 中文",
   "subscribe": "訂閱",
-  "choose_language": "選擇語言"
+  "choose_language": "選擇語言",
+  "receipt": "收據",
+  "update_billing": "更新付款方式",
+  "cancel_subscription": "取消訂閱",
+  "join_channel": "加入頻道"
 }

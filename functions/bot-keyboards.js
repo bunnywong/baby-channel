@@ -1,4 +1,6 @@
 const {Markup} = require('telegraf');
+// custom
+const {t} = require('./utils');
 
 const commonKeyboard = (lang) => {
   const buttons = lang === 'zh' ? ['計劃', '狀態'] : ['PLANS', 'STATUS'];
@@ -24,9 +26,9 @@ const firebaseStripeKeyboard = Markup.inlineKeyboard([
   ),
 ]);
 
-const btnJoinChannel = (link) => {
+const btnJoinChannel = (ctx, link) => {
   if (link) {
-    return Markup.button.url('🌟 Join Channel', link);
+    return Markup.button.url(`🌟 ${t(ctx, 'join_channel')}`, link);
   }
   return [];
 };

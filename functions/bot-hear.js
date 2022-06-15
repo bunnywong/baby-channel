@@ -110,24 +110,32 @@ const handleStatus = async (ctx) => {
     if (invoice?.hosted_invoice_url) {
       // button: Invoice
       inlineRowOne.push(
-        Markup.button.url('📁 Receipt', invoice?.hosted_invoice_url),
+        Markup.button.url(
+          `📁 ${t(ctx, 'receipt')}`,
+          invoice?.hosted_invoice_url,
+        ),
       );
     }
     // 2.12 button: Billing
     if (session?.url) {
-      inlineRowOne.push(Markup.button.url('📝 Update Billing', session?.url));
+      inlineRowOne.push(
+        Markup.button.url(`📝 ${t(ctx, 'update_billing')}`, session?.url),
+      );
     }
     // 2.21 line two:
     const inlineRowTwo = [];
     // button: Cancel Subscription
     if (sub?.id) {
       inlineRowTwo.push(
-        Markup.button.callback('⏹️ Cancel Subscription', `ask_unsub_${sub.id}`),
+        Markup.button.callback(
+          `⏹️ ${t(ctx, 'cancel_subscription')}`,
+          `ask_unsub_${sub.id}`,
+        ),
       );
     }
     // 2.22 button: invoite link
     if (sub?.metadata?.inviteLink) {
-      inlineRowTwo.push(btnJoinChannel(sub.metadata.inviteLink));
+      inlineRowTwo.push(btnJoinChannel(ctx, sub.metadata.inviteLink));
     }
 
     return await ctx.reply(

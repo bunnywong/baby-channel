@@ -6,5 +6,9 @@
   "receipt": "Receipt",
   "update_billing": "Update Billing",
   "cancel_subscription": "Cancel Subscription",
-  "join_channel": "Join Channel"
+  "join_channel": "Join Channel",
+  "charge_frequency": "Charge frequency",
+  "price": "Price",
+  "day": "day",
+  "month": "month"
 }

@@ -6,5 +6,9 @@
   "receipt": "收據",
   "update_billing": "更新付款方式",
   "cancel_subscription": "取消訂閱",
-  "join_channel": "加入頻道"
+  "join_channel": "加入頻道",
+  "charge_frequency": "收費週期",
+  "price": "價格",
+  "day": "天",
+  "month": "月"
 }

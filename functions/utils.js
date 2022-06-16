@@ -81,11 +81,13 @@ const contentProduct = async (productId, ctx) => {
   text += lineChargeFrequency(ctx, price?.recurring);
   return price ? text : null;
 };
-const lineNextPayment = (data) => {
+const lineNextPayment = (data, ctx) => {
   const periodEndDate = dayjs
     .unix(data?.current_period_end)
     .format('YYYY.MM.DD');
-  return `📆 Next payment on: ${periodEndDate}\n`;
+  const nextPaymentOn = ctx ? t(ctx, 'next_payment_on') : 'Next payment on';
+
+  return `📆 ${nextPaymentOn}: ${periodEndDate}\n`;
 };
 const randomArray = (arr) =>
   arr

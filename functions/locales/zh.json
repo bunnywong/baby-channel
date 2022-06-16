@@ -10,5 +10,9 @@
   "charge_frequency": "收費週期",
   "price": "價格",
   "day": "天",
-  "month": "月"
+  "month": "月",
+  "next_payment_on": "下次付款日期",
+  "you_have_subscribed": "您的訂閱",
+  "items": "項",
+  "item": "項"
 }

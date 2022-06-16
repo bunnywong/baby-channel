@@ -10,5 +10,9 @@
   "charge_frequency": "Charge frequency",
   "price": "Price",
   "day": "day",
-  "month": "month"
+  "month": "month",
+  "next_payment_on": "Next payment on",
+  "you_have_subscribed": "You have subscribed",
+  "items": "items",
+  "item": "item"
 }

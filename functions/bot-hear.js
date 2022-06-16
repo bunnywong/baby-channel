@@ -78,10 +78,11 @@ const handleStatus = async (ctx) => {
     const isActive = sub?.status === 'active';
     return isCurrentUser && isActive;
   });
-  const textItem = size(userInSubscription) > 1 ? 'items' : 'item';
-  const textSubscribed = `📮 You have subscribed ${size(
+  const textItem =
+    size(userInSubscription) > 1 ? t(ctx, 'items') : t(ctx, 'item');
+  const textSubscribed = `📮 ${t(ctx, 'you_have_subscribed')} (${size(
     userInSubscription,
-  )} ${textItem} as below:`;
+  )} ${textItem}):`;
   const textNewCustom = "You don't have any subscription"; // eslint-disable-line
   const textStatus = userInSubscription.length ? textSubscribed : textNewCustom;
   ctx.reply(textStatus);
@@ -101,7 +102,7 @@ const handleStatus = async (ctx) => {
     // text content
     const dateCreated = dayjs(sub.created * 1000).format('YYYY.MM.DD');
     let statusText = await contentProduct(sub?.plan?.product, ctx);
-    statusText += await lineNextPayment(sub);
+    statusText += await lineNextPayment(sub, ctx);
     statusText += `@DEBUG: created: ${dateCreated}\n`;
     statusText += `@DEBUG: Invoice status: ${invoice.status.toUpperCase()}`;
 

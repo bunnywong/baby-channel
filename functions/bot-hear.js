@@ -136,7 +136,7 @@ const handleStatus = async (ctx) => {
     }
     // 2.22 button: invoite link
     if (sub?.metadata?.inviteLink) {
-      inlineRowTwo.push(btnJoinChannel(ctx, sub.metadata.inviteLink));
+      inlineRowTwo.push(btnJoinChannel(sub.metadata.inviteLink, ctx));
     }
 
     return await ctx.reply(

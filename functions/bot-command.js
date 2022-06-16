@@ -94,3 +94,8 @@ bot.command('/webhooks', async (ctx) => {
   await getWebhookTelegram(ctx);
   getWebhookStripe(ctx);
 });
+bot.command('/t', async (ctx) => {
+  if (!isBotAdmin(ctx)) {
+    return;
+  }
+});

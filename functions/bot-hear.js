@@ -46,7 +46,7 @@ const handlePlans = async (ctx) => {
   channelData.forEach(async (channel) => {
     isTyping(ctx);
     const product = await stripe.products.retrieve(channel?.stripe_product_id);
-    const text = await contentProduct(channel?.stripe_product_id);
+    const text = await contentProduct(channel?.stripe_product_id, ctx);
     const channelId = channel?.channel_id;
     const session = await stripe.checkout.sessions.create({
       ...sessionEndpoints,
@@ -100,7 +100,7 @@ const handleStatus = async (ctx) => {
     const invoice = await stripe.invoices.retrieve(sub?.latest_invoice);
     // text content
     const dateCreated = dayjs(sub.created * 1000).format('YYYY.MM.DD');
-    let statusText = await contentProduct(sub?.plan?.product);
+    let statusText = await contentProduct(sub?.plan?.product, ctx);
     statusText += await lineNextPayment(sub);
     statusText += `@DEBUG: created: ${dateCreated}\n`;
     statusText += `@DEBUG: Invoice status: ${invoice.status.toUpperCase()}`;

@@ -22,7 +22,7 @@ const getChannelIds = async (botId) => {
   return ids;
 };
 const getChannels = async (botId) => {
-  // fetch items: stripe_product_id, support_text
+  // fetch items: stripe_product_id, support_text, product_info
   const snapshot = await db
     .collection(DATABASE)
     .doc(botId)

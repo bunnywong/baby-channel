@@ -1,9 +1,9 @@
 const {Telegraf} = require('telegraf');
-const {get, toString, upperCase} = require('lodash');
+const {find, get, toString, upperCase} = require('lodash');
 const dayjs = require('dayjs');
 // custom
 const {BOT_TOKEN, STRIPE_TOKEN} = process.env;
-const {getBotdata} = require('./services');
+const {getBotdata, getChannels} = require('./services');
 
 const bot = new Telegraf(BOT_TOKEN, {
   telegram: {webhookReply: true},
@@ -42,7 +42,18 @@ const getStatusInChannel = async (channelId, userId) => {
   }
 };
 // internal
-const lineProduct = (product) => {
+const lineProductLang = async (ctx) => {
+  // source form Firestore
+  const products = await getChannels(ctx.update?.bot_id);
+  const productInfo = get(products, '[0].product_info');
+  const data = find(productInfo, {lang: getLang(ctx)});
+  let text = `${data?.name}\n`;
+  text += `${data?.description}\n`;
+  text += '\n';
+  return text;
+};
+const lineProductStripe = (product) => {
+  // source form Stripe
   let text = `💎 ${product?.name}\n`;
   text += `${product?.description}\n`;
   text += '\n';
@@ -60,11 +71,10 @@ const lineChargeFrequency = (recurring) => {
   const interval = recurring?.interval;
   return `Charge frequency: ${intervalCount} ${interval}\n`;
 };
-const contentProduct = async (productId) => {
+const contentProduct = async (productId, ctx) => {
   const product = await stripe.products.retrieve(productId);
   const price = await stripe.prices.retrieve(product?.default_price);
-
-  let text = lineProduct(product);
+  let text = ctx ? await lineProductLang(ctx) : lineProductStripe(product);
   text += linePrice(price);
   text += lineChargeFrequency(price?.recurring);
   return price ? text : null;

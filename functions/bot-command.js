@@ -7,6 +7,7 @@ const {
   getLang,
   stripe,
   isTyping,
+  isBotAdmin,
   getUsername,
   getUserId,
   getStatusInChannel,
@@ -57,7 +58,6 @@ bot.command('/start', async (ctx) => {
   await ctx.reply(t(ctx, 'welcome'), commonKeyboard(lang));
   await ctx.reply(t(ctx, 'choose_language'), langKeyboard(lang));
 });
-
 // private commands for dev only:
 bot.command('/zh', async (ctx) => {
   await set(ctx, 'session.lang', 'zh');
@@ -72,11 +72,7 @@ bot.command('/lang', async (ctx) => {
   await ctx.reply(t(ctx, 'current_language'));
   await ctx.reply(t(ctx, 'choose_language'), langKeyboard());
 });
-bot.command('webhooks', async (ctx) => {
-  await getWebhookTelegram(ctx);
-  getWebhookStripe(ctx);
-});
-bot.command('status', async (ctx) => {
+bot.command('/status', async (ctx) => {
   isTyping(ctx);
   const channelIds = await getChannelIds(ctx.update?.bot_id);
   const channelId = head(channelIds); // set multi
@@ -89,4 +85,12 @@ bot.command('who', async (ctx) => {
   let message = `User ID: ${getUserId(ctx)}\n`;
   message += `Username: ${usernamneText}`;
   ctx.reply(message);
+});
+// admin command:
+bot.command('/webhooks', async (ctx) => {
+  if (!isBotAdmin(ctx)) {
+    return;
+  }
+  await getWebhookTelegram(ctx);
+  getWebhookStripe(ctx);
 });

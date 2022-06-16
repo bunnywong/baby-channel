@@ -1,7 +1,9 @@
 const {Telegraf} = require('telegraf');
 const {get, toString, upperCase} = require('lodash');
 const dayjs = require('dayjs');
+// custom
 const {BOT_TOKEN, STRIPE_TOKEN} = process.env;
+const {getBotdata} = require('./services');
 
 const bot = new Telegraf(BOT_TOKEN, {
   telegram: {webhookReply: true},
@@ -10,6 +12,11 @@ const Stripe = require('stripe');
 const stripe = new Stripe(STRIPE_TOKEN);
 
 const isTyping = (ctx) => ctx.telegram.sendChatAction(ctx?.chat?.id, 'typing');
+const isBotAdmin = async (ctx) => {
+  const formUserId = get(ctx, 'update.message.from.id', false);
+  const adminUserId = await getBotdata(ctx?.update?.bot_id);
+  return Boolean(formUserId === adminUserId);
+};
 
 // translate: by session support
 const t = (ctx, message) => {
@@ -80,6 +87,7 @@ module.exports = {
   t,
   getLang,
   isTyping,
+  isBotAdmin,
   getUsername,
   getUserId,
   getStatusInChannel,

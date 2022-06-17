@@ -20,6 +20,14 @@ const isBotAdmin = async (ctx) => {
 
 // translate: by session support
 const t = (ctx, message) => {
+  const customLang = get(ctx, 'lang');
+  if (customLang) {
+    const fs = require('fs');
+    const data = JSON.parse(
+      fs.readFileSync(`./locales/${customLang}.json`, 'utf8'),
+    );
+    return data?.[message];
+  }
   const lang = get(ctx, 'session.lang', 'en');
   ctx.i18n.locale(lang);
   return ctx.i18n.t(message);

@@ -14,5 +14,6 @@
   "next_payment_on": "下次付款日期",
   "you_have_subscribed": "您的訂閱",
   "items": "項",
-  "item": "項"
+  "item": "項",
+  "your_subscription_is_active": "你的訂閱已經生效"
 }

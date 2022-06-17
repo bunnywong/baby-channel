@@ -5,6 +5,7 @@ const dayjs = require('dayjs');
 const {btnJoinChannel} = require('./bot-keyboards');
 const {
   bot,
+  t,
   stripe,
   lineNextPayment,
   contentProduct,
@@ -58,8 +59,7 @@ const banUser = async (channelId, userId) => {
 // 1. handler created
 const handleSubscriptionCreated = async (response, data) => {
   console.info('...webhook: customer.subscription.created');
-  const userId = data.metadata?.userId;
-  const channelId = data.metadata?.channelId;
+  const {lang, userId, channelId} = data.metadata;
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
     member_limit: 1,
     name: `user ID: ${userId}`,
@@ -69,7 +69,7 @@ const handleSubscriptionCreated = async (response, data) => {
   const invoice = await stripe.invoices.retrieve(data?.latest_invoice);
   if (inviteLink && invoice.hosted_invoice_url) {
     whitelistUser(channelId, userId);
-    let text = '🎉 Your subscription is ACTIVE\n';
+    let text = `🎉 ${t({lang}, 'your_subscription_is_active')}\n`;
     text += lineNextPayment(data);
     bot.telegram.sendMessage(
       userId,

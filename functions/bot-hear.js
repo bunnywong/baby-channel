@@ -10,6 +10,7 @@ const {
   getUsername,
   getUserId,
   isTyping,
+  isBotAdmin,
   contentProduct,
   lineNextPayment,
 } = require('./utils');
@@ -103,8 +104,10 @@ const handleStatus = async (ctx) => {
     const dateCreated = dayjs(sub.created * 1000).format('YYYY.MM.DD');
     let statusText = await contentProduct(sub?.plan?.product, ctx);
     statusText += await lineNextPayment(sub, ctx);
-    statusText += `@DEBUG: created: ${dateCreated}\n`;
-    statusText += `@DEBUG: Invoice status: ${invoice.status.toUpperCase()}`;
+    if (isBotAdmin(ctx)) {
+      statusText += `[admin] created: ${dateCreated}\n`;
+      statusText += `[admin] Invoice status: ${invoice.status.toUpperCase()}`;
+    }
 
     const inlineRowOne = [];
     // 2.11 line one:

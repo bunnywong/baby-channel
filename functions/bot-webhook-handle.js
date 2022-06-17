@@ -142,6 +142,9 @@ const handleSubscriptionDeleted = async (response, data) => {
   }
   const productId = get(data, 'plan.product', false);
   const channelId = get(data, 'metadata.channelId', false);
+  const lang = get(data, 'metadata.channelId');
+  const langObj = {lang};
+
   const userId = data?.metadata?.userId;
   // 1.1 kick user from channel
   banUser(channelId, userId);
@@ -151,7 +154,7 @@ const handleSubscriptionDeleted = async (response, data) => {
     const price = await stripe.prices.retrieve(product?.default_price);
     let text = '🔔 Your subscription was canceled successfully.\n';
     text += 'You will not be charged again for below subscription:\n\n';
-    text += await contentProduct(price?.recurring);
+    text += await contentProduct(langObj, price?.recurring);
     bot.telegram.sendMessage(userId, text);
   }
   return await response.status(200).end();

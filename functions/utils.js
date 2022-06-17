@@ -53,16 +53,9 @@ const getStatusInChannel = async (channelId, userId) => {
 const lineProductLang = async (ctx) => {
   const products = await getChannels(ctx.update?.bot_id);
   const productInfo = get(products, '[0].product_info');
-  const data = find(productInfo, {lang: getLang(ctx)});
+  const data = find(productInfo, {lang: get(ctx, 'lang', getLang(ctx))});
   let text = `${data?.name}\n`;
   text += `${data?.description}\n`;
-  text += '\n';
-  return text;
-};
-// internal: source form Stripe
-const lineProductStripe = (product) => {
-  let text = `💎 ${product?.name}\n`;
-  text += `${product?.description}\n`;
   text += '\n';
   return text;
 };
@@ -81,10 +74,10 @@ const lineChargeFrequency = (ctx, recurring) => {
     interval,
   )}\n`;
 };
-const contentProduct = async (productId, ctx) => {
+const contentProduct = async (ctx, productId) => {
   const product = await stripe.products.retrieve(productId);
   const price = await stripe.prices.retrieve(product?.default_price);
-  let text = ctx ? await lineProductLang(ctx) : lineProductStripe(product);
+  let text = await lineProductLang(ctx);
   text += linePrice(ctx, price);
   text += lineChargeFrequency(ctx, price?.recurring);
   return price ? text : null;

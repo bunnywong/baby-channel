@@ -7,6 +7,7 @@ const {
   bot,
   t,
   stripe,
+  getLang,
   getUsername,
   getUserId,
   isTyping,
@@ -55,6 +56,8 @@ const handlePlans = async (ctx) => {
       mode: 'subscription',
       subscription_data: {
         metadata: {
+          lang: getLang(ctx),
+          bot_id: botId,
           channelId,
           userId: getUserId(ctx),
           username: getUsername(ctx),

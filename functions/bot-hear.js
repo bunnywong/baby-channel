@@ -140,9 +140,9 @@ const handleStatus = async (ctx) => {
         ),
       );
     }
-    // 2.22 button: invoite link
+    // 2.22 button: invite link
     if (sub?.metadata?.inviteLink) {
-      inlineRowTwo.push(btnJoinChannel(sub.metadata.inviteLink, ctx));
+      inlineRowTwo.push(ctx, btnJoinChannel(sub.metadata.inviteLink));
     }
 
     return await ctx.reply(

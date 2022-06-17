@@ -93,7 +93,7 @@ const lineNextPayment = (data, ctx) => {
   const periodEndDate = dayjs
     .unix(data?.current_period_end)
     .format('YYYY.MM.DD');
-  const nextPaymentOn = ctx ? t(ctx, 'next_payment_on') : 'Next payment on';
+  const nextPaymentOn = t(ctx, 'next_payment_on');
 
   return `📆 ${nextPaymentOn}: ${periodEndDate}\n`;
 };

@@ -26,10 +26,9 @@ const firebaseStripeKeyboard = Markup.inlineKeyboard([
   ),
 ]);
 
-const btnJoinChannel = (link, ctx) => {
+const btnJoinChannel = (ctx, link) => {
   if (link) {
-    const joinChannel = ctx ? t(ctx, 'join_channel') : 'join channel';
-    return Markup.button.url(`🌟 ${joinChannel}`, link);
+    return Markup.button.url(`🌟 ${t(ctx, 'join_channel')}`, link);
   }
   return [];
 };

@@ -15,5 +15,7 @@
   "you_have_subscribed": "You have subscribed",
   "items": "items",
   "item": "item",
-  "your_subscription_is_active": "Your subscription is ACTIVE"
+  "your_subscription_is_active": "Your subscription is ACTIVE",
+  "invoice_and_receipt": "Invoice and Receipt",
+  "not_able_to_create_a_channel_invite_link": "Not able to a create channel invite link"
 }

@@ -15,5 +15,7 @@
   "you_have_subscribed": "您的訂閱",
   "items": "項",
   "item": "項",
-  "your_subscription_is_active": "你的訂閱已經生效"
+  "your_subscription_is_active": "你的訂閱已經生效",
+  "invoice_and_receipt": "發票和收據",
+  "not_able_to_create_a_channel_invite_link": "無法創建頻道邀請鏈接"
 }

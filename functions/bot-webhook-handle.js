@@ -60,6 +60,8 @@ const banUser = async (channelId, userId) => {
 const handleSubscriptionCreated = async (response, data) => {
   console.info('...webhook: customer.subscription.created');
   const {lang, userId, channelId} = data.metadata;
+  const langObj = {lang};
+
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
     member_limit: 1,
     name: `user ID: ${userId}`,
@@ -69,14 +71,18 @@ const handleSubscriptionCreated = async (response, data) => {
   const invoice = await stripe.invoices.retrieve(data?.latest_invoice);
   if (inviteLink && invoice.hosted_invoice_url) {
     whitelistUser(channelId, userId);
-    let text = `🎉 ${t({lang}, 'your_subscription_is_active')}\n`;
-    text += lineNextPayment(data);
+    let text = `🎉 ${t(langObj, 'your_subscription_is_active')}\n`;
+    text += lineNextPayment(data, langObj);
     bot.telegram.sendMessage(
       userId,
       text,
       Markup.inlineKeyboard([
-        Markup.button.url('📁 Invoice and Receipt', invoice.hosted_invoice_url),
-        btnJoinChannel(inviteLink),
+        // Markup.button.url('📁 Invoice and Receipt', invoice.hosted_invoice_url),
+        Markup.button.url(
+          `📁 ${t(langObj, 'invoice_and_receipt')}`,
+          invoice.hosted_invoice_url,
+        ),
+        btnJoinChannel(langObj, inviteLink),
       ]),
     );
     // update metadata with invite link
@@ -88,7 +94,10 @@ const handleSubscriptionCreated = async (response, data) => {
       subscriptionUpdate?.status,
     );
   } else {
-    const text = '⚠️ Not able to create channel invite link\n';
+    const text = `⚠️ ${t(
+      langObj,
+      'not_able_to_create_a_channel_invite_link',
+    )}\n`;
     bot.telegram.sendMessage(userId, text + SUPPORT_TEXT);
   }
   return await response.status(200).end();

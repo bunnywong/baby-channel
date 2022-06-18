@@ -23,5 +23,8 @@
   "yes_i_am_100_percent_sure": "是的，我百分百確定",
   "your_subscription_was_not_cancelled_it_still_alive": "您的訂閱沒有取消，它仍然有效",
   "canceled_subscription": "已取消訂閱",
+  "your_subscription_was_canceled_successfully": "您的訂閱已成功取消",
+  "you_will_not_be_charged_again_for_the_below_subscription": "以下訂閱將不會再次向您收費",
+  "you_dont_have_any_subscription": "您沒有任何訂閱",
   "not_able_to_create_a_channel_invite_link": "無法創建頻道邀請鏈接"
 }

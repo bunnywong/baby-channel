@@ -87,7 +87,7 @@ const handleStatus = async (ctx) => {
   const textSubscribed = `📮 ${t(ctx, 'you_have_subscribed')} (${size(
     userInSubscription,
   )} ${textItem}):`;
-  const textNewCustom = "You don't have any subscription"; // eslint-disable-line
+  const textNewCustom = t(ctx, 'you_dont_have_any_subscription');
   const textStatus = userInSubscription.length ? textSubscribed : textNewCustom;
   ctx.reply(textStatus);
   // plans combo message

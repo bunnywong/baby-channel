@@ -17,5 +17,11 @@
   "item": "項",
   "your_subscription_is_active": "你的訂閱已經生效",
   "invoice_and_receipt": "發票和收據",
+  "nope_nevermind": "不要，沒關係的",
+  "no_no_no": "不要! 不要! 不要!",
+  "no": "不要",
+  "yes_i_am_100_percent_sure": "是的，我百分百確定",
+  "your_subscription_was_not_cancelled_it_still_alive": "您的訂閱沒有取消，它仍然有效",
+  "canceled_subscription": "已取消訂閱",
   "not_able_to_create_a_channel_invite_link": "無法創建頻道邀請鏈接"
 }

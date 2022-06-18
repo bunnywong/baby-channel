@@ -17,5 +17,11 @@
   "item": "item",
   "your_subscription_is_active": "Your subscription is ACTIVE",
   "invoice_and_receipt": "Invoice and Receipt",
+  "nope_nevermind": "Nope, nevermind",
+  "no_no_no": "No No No",
+  "no": "No",
+  "yes_i_am_100_percent_sure": "Yes I'm 100% sure",
+  "your_subscription_was_not_cancelled_it_still_alive": "Your subscription was not canceled, it is still alive",
+  "canceled_subscription": "Canceled subscription",
   "not_able_to_create_a_channel_invite_link": "Not able to a create channel invite link"
 }

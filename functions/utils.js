@@ -50,13 +50,12 @@ const getStatusInChannel = async (channelId, userId) => {
   }
 };
 // internal: source form Firestore
-const lineProductLang = async (ctx, botId) => {
+const lineProduct = async (ctx, botId) => {
   const products = await getChannels(botId);
   const productInfo = get(products, '[0].product_info');
   const data = find(productInfo, {lang: get(ctx, 'lang', getLang(ctx))});
   let text = `${data?.name}\n`;
-  text += `${data?.description}\n`;
-  text += '\n';
+  text += `${data?.description}\n\n`;
   return text;
 };
 // internal
@@ -67,9 +66,8 @@ const linePrice = (ctx, price) => {
 };
 // internal
 const lineChargeFrequency = (ctx, recurring) => {
-  const intervalCount = recurring?.interval_count;
-  const interval = recurring?.interval;
-  return `${t(ctx, 'charge_frequency')}: ${intervalCount} ${t(
+  const {interval_count, interval} = recurring;
+  return `${t(ctx, 'charge_frequency')}: ${interval_count} ${t(
     ctx,
     interval,
   )}\n`;
@@ -77,7 +75,7 @@ const lineChargeFrequency = (ctx, recurring) => {
 const contentProduct = async (ctx, productId, botId) => {
   const product = await stripe.products.retrieve(productId);
   const price = await stripe.prices.retrieve(product?.default_price);
-  let text = await lineProductLang(ctx, botId);
+  let text = await lineProduct(ctx, botId);
   text += linePrice(ctx, price);
   text += lineChargeFrequency(ctx, price?.recurring);
   return price ? text : null;

@@ -143,6 +143,7 @@ const handleSubscriptionDeleted = async (response, data) => {
   const productId = get(data, 'plan.product', false);
   const channelId = get(data, 'metadata.channelId', false);
   const lang = get(data, 'metadata.lang');
+  const botId = get(data, 'metadata.bot_id');
   const langObj = {lang};
 
   const userId = data?.metadata?.userId;
@@ -160,7 +161,7 @@ const handleSubscriptionDeleted = async (response, data) => {
       langObj,
       'you_will_not_be_charged_again_for_the_below_subscription',
     )}:\n\n`;
-    text += await contentProduct(langObj, price?.recurring);
+    text += await contentProduct(langObj, price?.recurring, botId);
     bot.telegram.sendMessage(userId, text);
   }
   return await response.status(200).end();

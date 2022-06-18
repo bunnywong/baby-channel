@@ -142,7 +142,7 @@ const handleStatus = async (ctx) => {
     }
     // 2.22 button: invite link
     if (sub?.metadata?.inviteLink) {
-      inlineRowTwo.push(ctx, btnJoinChannel(sub.metadata.inviteLink));
+      inlineRowTwo.push(btnJoinChannel(ctx, sub.metadata.inviteLink));
     }
 
     return await ctx.reply(

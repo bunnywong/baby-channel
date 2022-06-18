@@ -47,7 +47,11 @@ const handlePlans = async (ctx) => {
   channelData.forEach(async (channel) => {
     isTyping(ctx);
     const product = await stripe.products.retrieve(channel?.stripe_product_id);
-    const text = await contentProduct(ctx, channel?.stripe_product_id);
+    const text = await contentProduct(
+      ctx,
+      channel?.stripe_product_id,
+      ctx.update?.bot_id,
+    );
     const channelId = channel?.channel_id;
     const session = await stripe.checkout.sessions.create({
       ...sessionEndpoints,
@@ -103,9 +107,9 @@ const handleStatus = async (ctx) => {
   isTyping(ctx);
   forEach(userInSubscription, async (sub) => {
     const invoice = await stripe.invoices.retrieve(sub?.latest_invoice);
-    // text content
+    const productId = sub?.plan?.product;
     const dateCreated = dayjs(sub.created * 1000).format('YYYY.MM.DD');
-    let statusText = await contentProduct(ctx, sub?.plan?.product);
+    let statusText = await contentProduct(ctx, productId, ctx.update?.bot_id);
     statusText += await lineNextPayment(sub, ctx);
     if (isBotAdmin(ctx)) {
       statusText += `[admin] created: ${dateCreated}\n`;

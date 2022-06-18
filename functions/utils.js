@@ -66,10 +66,9 @@ const linePrice = (ctx, price) => {
 };
 // internal
 const lineChargeFrequency = (ctx, recurring) => {
-  const {interval_count, interval} = recurring;
-  return `${t(ctx, 'charge_frequency')}: ${interval_count} ${t(
+  return `${t(ctx, 'charge_frequency')}: ${recurring.interval_count} ${t(
     ctx,
-    interval,
+    recurring.interval,
   )}\n`;
 };
 const contentProduct = async (ctx, productId, botId) => {

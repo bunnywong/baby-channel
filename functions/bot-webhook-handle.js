@@ -77,7 +77,6 @@ const handleSubscriptionCreated = async (response, data) => {
       userId,
       text,
       Markup.inlineKeyboard([
-        // Markup.button.url('📁 Invoice and Receipt', invoice.hosted_invoice_url),
         Markup.button.url(
           `📁 ${t(langObj, 'invoice_and_receipt')}`,
           invoice.hosted_invoice_url,

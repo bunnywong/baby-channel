@@ -22,7 +22,7 @@ const sessionEndpoints = {
   cancel_url: `${BASE_URL}/payment_cancel`,
 };
 
-// 1. plans
+// 0. hear
 bot.hears('PLANS', async (ctx) => {
   await set(ctx, 'session.lang', 'en');
   handlePlans(ctx);
@@ -31,7 +31,6 @@ bot.hears('計劃', async (ctx) => {
   await set(ctx, 'session.lang', 'zh');
   handlePlans(ctx);
 });
-// 2.: status
 bot.hears('STATUS', async (ctx) => {
   await set(ctx, 'session.lang', 'en');
   await handleStatus(ctx);
@@ -40,7 +39,7 @@ bot.hears('狀態', async (ctx) => {
   await set(ctx, 'session.lang', 'zh');
   await handleStatus(ctx);
 });
-
+// 1. plans
 const handlePlans = async (ctx) => {
   isTyping(ctx);
   const botId = ctx.update?.bot_id;
@@ -73,6 +72,7 @@ const handlePlans = async (ctx) => {
     );
   });
 };
+// 2. status
 const handleStatus = async (ctx) => {
   isTyping(ctx);
   const subscriptions = await stripe.subscriptions.list();

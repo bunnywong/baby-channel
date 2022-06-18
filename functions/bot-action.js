@@ -3,10 +3,7 @@ const {set} = require('lodash');
 // custom
 const {bot, t, stripe, isMasterAdmin, randomArray} = require('./utils');
 const {commonKeyboard} = require('./bot-keyboards');
-
 require('./bot-action');
-// 0. subscribe
-bot.action(/subscribe_+/, async (ctx) => {});
 
 // 1. unsubscribe
 bot.action(/ask_unsub_+/, async (ctx) => {

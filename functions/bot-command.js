@@ -7,7 +7,7 @@ const {
   getLang,
   stripe,
   isTyping,
-  isBotAdmin,
+  isMasterAdmin,
   getUsername,
   getUserId,
   getStatusInChannel,
@@ -88,7 +88,7 @@ bot.command('who', async (ctx) => {
 });
 // admin command:
 bot.command('/webhooks', async (ctx) => {
-  if (!isBotAdmin(ctx)) {
+  if (!isMasterAdmin(ctx)) {
     return;
   }
   await getWebhookTelegram(ctx);

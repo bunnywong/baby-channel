@@ -5,6 +5,7 @@ const {
   bot,
   t,
   getLang,
+  isBotAdmin,
   stripe,
   isTyping,
   isMasterAdmin,

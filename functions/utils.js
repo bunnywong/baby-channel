@@ -2,7 +2,7 @@ const {Telegraf} = require('telegraf');
 const {find, get, toString, upperCase} = require('lodash');
 const dayjs = require('dayjs');
 // custom
-const {BOT_TOKEN, STRIPE_TOKEN} = process.env;
+const {MASTER_TG_UID, BOT_TOKEN, STRIPE_TOKEN} = process.env;
 const {getBotdata, getChannels} = require('./services');
 
 const bot = new Telegraf(BOT_TOKEN, {
@@ -13,10 +13,12 @@ const stripe = new Stripe(STRIPE_TOKEN);
 
 const isTyping = (ctx) => ctx.telegram.sendChatAction(ctx?.chat?.id, 'typing');
 const isBotAdmin = async (ctx) => {
-  const formUserId = get(ctx, 'update.message.from.id', false);
-  const adminUserId = await getBotdata(ctx?.update?.bot_id);
-  return Boolean(formUserId === adminUserId);
+  const formUid = get(ctx, 'update.message.from.id', false);
+  const botData = await getBotdata(ctx?.update?.bot_id);
+  return Boolean(formUid === botData?.admin_uid);
 };
+const isMasterAdmin = (ctx) =>
+  String(get(ctx, 'update.message.from.id')) === String(MASTER_TG_UID);
 
 // translate: by session support
 const t = (ctx, message) => {
@@ -100,6 +102,7 @@ module.exports = {
   getLang,
   isTyping,
   isBotAdmin,
+  isMasterAdmin,
   getUsername,
   getUserId,
   getStatusInChannel,

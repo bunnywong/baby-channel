@@ -1,4 +1,4 @@
-const {DATABASE} = process.env;
+const {FIRESTORE_DB} = process.env;
 const firebase = require('firebase-admin');
 const {map} = require('lodash');
 const serviceAccount = require('./service-account.json');
@@ -10,7 +10,7 @@ const db = firebase.firestore();
 
 const getBotdata = async (botId) => {
   // fetch items: admin_uid, bot_token, stripe_token
-  const snapshot = await db.collection(DATABASE).doc(botId).get();
+  const snapshot = await db.collection(FIRESTORE_DB).doc(botId).get();
   return snapshot.exists ? snapshot.data() : null;
 };
 const getChannelIds = async (botId) => {
@@ -24,7 +24,7 @@ const getChannelIds = async (botId) => {
 const getChannels = async (botId) => {
   // fetch items: stripe_product_id, support_text, product_info
   const snapshot = await db
-    .collection(DATABASE)
+    .collection(FIRESTORE_DB)
     .doc(botId)
     .collection('channels')
     .get();

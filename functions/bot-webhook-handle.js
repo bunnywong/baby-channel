@@ -1,12 +1,13 @@
 const {SUPPORT_TEXT} = process.env;
 const {Markup} = require('telegraf');
-const {size, get, isEmpty} = require('lodash');
+const {set, size, get, isEmpty} = require('lodash');
 const dayjs = require('dayjs');
 const {btnJoinChannel} = require('./bot-keyboards');
 const {
   bot,
   t,
   stripe,
+  isBotAdmin,
   lineNextPayment,
   contentProduct,
   getStatusInChannel,
@@ -34,7 +35,14 @@ const whitelistUser = async (channelId, userId) => {
     console.error(err);
   }
 };
-const banUser = async (channelId, userId) => {
+const banUser = async (channelId, userId, botId) => {
+  let ctx = {};
+  ctx = set(ctx, 'update.message.from.id', userId);
+  ctx = set(ctx, 'update.bot_id', botId);
+  const _isBotAdmin = await isBotAdmin(ctx);
+  if (_isBotAdmin) {
+    return;
+  }
   const textInfo = `user ID: ${userId} of channel ID[${channelId}]`;
   if (isEmpty(channelId) || isEmpty(userId)) {
     console.error(`...Not able to ban user with (either)empty ${textInfo}`);
@@ -147,11 +155,9 @@ const handleSubscriptionDeleted = async (response, data) => {
 
   const userId = data?.metadata?.userId;
   // 1.1 kick user from channel
-  banUser(channelId, userId);
+  banUser(channelId, userId, botId);
   // 1.2 reply message for warm remind: unsubscribed
   if (productId) {
-    const product = await stripe.products.retrieve(productId);
-    const price = await stripe.prices.retrieve(product?.default_price);
     let text = `🔔 ${t(
       langObj,
       'your_subscription_was_canceled_successfully',
@@ -160,7 +166,7 @@ const handleSubscriptionDeleted = async (response, data) => {
       langObj,
       'you_will_not_be_charged_again_for_the_below_subscription',
     )}:\n\n`;
-    text += await contentProduct(langObj, price?.recurring, botId);
+    text += await contentProduct(langObj, productId, botId);
     bot.telegram.sendMessage(userId, text);
   }
   return await response.status(200).end();

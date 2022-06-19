@@ -67,7 +67,7 @@ const banUser = async (channelId, userId, botId) => {
 // 1. handler created
 const handleSubscriptionCreated = async (response, data) => {
   console.info('...webhook: customer.subscription.created');
-  const {lang, userId, channelId} = data.metadata;
+  const {lang, user_id: userId, channel_id: channelId} = data.metadata;
   const langObj = {lang};
 
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
@@ -94,10 +94,10 @@ const handleSubscriptionCreated = async (response, data) => {
     );
     // update metadata with invite link
     const subscriptionUpdate = await stripe.subscriptions.update(data?.id, {
-      metadata: {...data.metadata, inviteLink},
+      metadata: {...data.metadata, invite_link: inviteLink},
     });
     console.info(
-      '...Saved invite link to subscription metadata:',
+      '...update stripe.subscriptions(metadata.invite_link) result:',
       subscriptionUpdate?.status,
     );
   } else {
@@ -116,9 +116,12 @@ const handleSubscriptionUpdated = async (response, data) => {
     return;
   }
   // update metadata channel invite link
-  const userId = data.metadata?.userId;
-  const channelId = data.metadata?.channelId;
-  const lastUpdate = data.metadata?.last_update;
+  const {
+    user_id: userId,
+    channel_id: channelId,
+    last_update: lastUpdate,
+  } = data.metadata;
+
   const today = dayjs().format('YYYY.MM.DD');
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
     // 2. handler created
@@ -130,7 +133,7 @@ const handleSubscriptionUpdated = async (response, data) => {
   // the middle empty check for webhook fire order: `updated` > `created`
   if (inviteLink && size(lastUpdate) && lastUpdate != today) {
     const subscriptionUpdate = await stripe.subscriptions.update(data?.id, {
-      metadata: {...data.metadata, inviteLink, last_update: today},
+      metadata: {...data.metadata, invite_link: inviteLink, last_update: today},
     });
     console.info(
       '...Updated invite link to subscription metadata:',
@@ -148,12 +151,14 @@ const handleSubscriptionDeleted = async (response, data) => {
     return await response.status(203).end();
   }
   const productId = get(data, 'plan.product', false);
-  const channelId = get(data, 'metadata.channelId', false);
-  const lang = get(data, 'metadata.lang');
-  const botId = get(data, 'metadata.bot_id');
+  const {
+    lang,
+    channel_id: channelId,
+    bot_id: botId,
+    user_id: userId,
+  } = data?.metadata;
   const langObj = {lang};
 
-  const userId = data?.metadata?.userId;
   // 1.1 kick user from channel
   banUser(channelId, userId, botId);
   // 1.2 reply message for warm remind: unsubscribed

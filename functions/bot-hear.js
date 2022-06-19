@@ -61,8 +61,8 @@ const handlePlans = async (ctx) => {
         metadata: {
           lang: getLang(ctx),
           bot_id: botId,
-          channelId,
-          userId: getUserId(ctx),
+          channel_id: channelId,
+          user_id: getUserId(ctx),
           username: getUsername(ctx),
           last_update: dayjs().format('YYYY.MM.DD'),
         },
@@ -82,7 +82,7 @@ const handleStatus = async (ctx) => {
   const subscriptions = await stripe.subscriptions.list();
   // filter out active subscribe for current user(as I/O result)
   const userInSubscription = filter(subscriptions?.data, (sub) => {
-    const isCurrentUser = sub?.metadata?.userId === getUserId(ctx);
+    const isCurrentUser = sub?.metadata?.user_id === getUserId(ctx);
     const isActive = sub?.status === 'active';
     return isCurrentUser && isActive;
   });
@@ -146,8 +146,8 @@ const handleStatus = async (ctx) => {
       );
     }
     // 2.22 button: invite link
-    if (sub?.metadata?.inviteLink) {
-      inlineRowTwo.push(btnJoinChannel(ctx, sub.metadata.inviteLink));
+    if (sub?.metadata?.invite_link) {
+      inlineRowTwo.push(btnJoinChannel(ctx, sub.metadata.invite_link));
     }
 
     return await ctx.reply(

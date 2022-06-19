@@ -11,7 +11,7 @@ const {
   getUsername,
   getUserId,
   isTyping,
-  isBotAdmin,
+  isMasterAdmin,
   contentProduct,
   lineNextPayment,
 } = require('./utils');
@@ -111,7 +111,8 @@ const handleStatus = async (ctx) => {
     const dateCreated = dayjs(sub.created * 1000).format('YYYY.MM.DD');
     let statusText = await contentProduct(ctx, productId, ctx.update?.bot_id);
     statusText += await lineNextPayment(sub, ctx);
-    if (isBotAdmin(ctx)) {
+
+    if (isMasterAdmin(ctx)) {
       statusText += `[admin] created: ${dateCreated}\n`;
       statusText += `[admin] Invoice status: ${invoice.status.toUpperCase()}`;
     }

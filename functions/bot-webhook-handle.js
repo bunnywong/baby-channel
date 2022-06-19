@@ -158,8 +158,6 @@ const handleSubscriptionDeleted = async (response, data) => {
   banUser(channelId, userId, botId);
   // 1.2 reply message for warm remind: unsubscribed
   if (productId) {
-    const product = await stripe.products.retrieve(productId);
-    const price = await stripe.prices.retrieve(product?.default_price);
     let text = `🔔 ${t(
       langObj,
       'your_subscription_was_canceled_successfully',
@@ -168,7 +166,7 @@ const handleSubscriptionDeleted = async (response, data) => {
       langObj,
       'you_will_not_be_charged_again_for_the_below_subscription',
     )}:\n\n`;
-    text += await contentProduct(langObj, price?.recurring, botId);
+    text += await contentProduct(langObj, productId, botId);
     bot.telegram.sendMessage(userId, text);
   }
   return await response.status(200).end();

@@ -156,7 +156,7 @@ const handleSubscriptionDeleted = async (response, data) => {
     channel_id: channelId,
     bot_id: botId,
     user_id: userId,
-  } = data?.metadata;
+  } = data.metadata;
   const langObj = {lang};
 
   // 1.1 kick user from channel

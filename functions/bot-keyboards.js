@@ -1,11 +1,19 @@
 const {Markup} = require('telegraf');
+// custom
+const {t} = require('./utils');
 
-const commonKeyboard = Markup.keyboard([['PLANS', 'STATUS']]).resize();
+const commonKeyboard = (lang) => {
+  const buttons = lang === 'zh' ? ['計劃', '狀態'] : ['PLANS', 'STATUS'];
+  return Markup.keyboard([buttons]).resize();
+};
 
-const langKeyboard = Markup.inlineKeyboard([
-  Markup.button.callback('English', 'english'),
-  Markup.button.callback('中文', 'chinese'),
-]);
+const langKeyboard = (currentLang) => {
+  const showChecked = (lang) => (currentLang === lang ? ' ✓' : '');
+  return Markup.inlineKeyboard([
+    Markup.button.callback(`English ${showChecked('en')}`, 'english'),
+    Markup.button.callback(`中文 ${showChecked('zh')}`, 'chinese'),
+  ]);
+};
 
 const firebaseStripeKeyboard = Markup.inlineKeyboard([
   Markup.button.callback(
@@ -18,9 +26,9 @@ const firebaseStripeKeyboard = Markup.inlineKeyboard([
   ),
 ]);
 
-const btnJoinChannel = (link) => {
+const btnJoinChannel = (ctx, link) => {
   if (link) {
-    return Markup.button.url('🌟 Join Channel', link);
+    return Markup.button.url(`🌟 ${t(ctx, 'join_channel')}`, link);
   }
   return [];
 };

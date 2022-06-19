@@ -9,6 +9,7 @@ firebase.initializeApp({
 const db = firebase.firestore();
 
 const getBotdata = async (botId) => {
+  // fetch items: admin_uid, bot_token, stripe_token
   const snapshot = await db.collection(DATABASE).doc(botId).get();
   return snapshot.exists ? snapshot.data() : null;
 };
@@ -21,6 +22,7 @@ const getChannelIds = async (botId) => {
   return ids;
 };
 const getChannels = async (botId) => {
+  // fetch items: stripe_product_id, support_text, product_info
   const snapshot = await db
     .collection(DATABASE)
     .doc(botId)

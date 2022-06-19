@@ -5,6 +5,7 @@ const dayjs = require('dayjs');
 const {btnJoinChannel} = require('./bot-keyboards');
 const {
   bot,
+  t,
   stripe,
   lineNextPayment,
   contentProduct,
@@ -58,8 +59,9 @@ const banUser = async (channelId, userId) => {
 // 1. handler created
 const handleSubscriptionCreated = async (response, data) => {
   console.info('...webhook: customer.subscription.created');
-  const userId = data.metadata?.userId;
-  const channelId = data.metadata?.channelId;
+  const {lang, userId, channelId} = data.metadata;
+  const langObj = {lang};
+
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
     member_limit: 1,
     name: `user ID: ${userId}`,
@@ -69,14 +71,17 @@ const handleSubscriptionCreated = async (response, data) => {
   const invoice = await stripe.invoices.retrieve(data?.latest_invoice);
   if (inviteLink && invoice.hosted_invoice_url) {
     whitelistUser(channelId, userId);
-    let text = '🎉 Your subscription is ACTIVE\n';
-    text += lineNextPayment(data);
+    let text = `🎉 ${t(langObj, 'your_subscription_is_active')}\n`;
+    text += lineNextPayment(data, langObj);
     bot.telegram.sendMessage(
       userId,
       text,
       Markup.inlineKeyboard([
-        Markup.button.url('📁 Invoice and Receipt', invoice.hosted_invoice_url),
-        btnJoinChannel(inviteLink),
+        Markup.button.url(
+          `📁 ${t(langObj, 'invoice_and_receipt')}`,
+          invoice.hosted_invoice_url,
+        ),
+        btnJoinChannel(langObj, inviteLink),
       ]),
     );
     // update metadata with invite link
@@ -88,7 +93,10 @@ const handleSubscriptionCreated = async (response, data) => {
       subscriptionUpdate?.status,
     );
   } else {
-    const text = '⚠️ Not able to create channel invite link\n';
+    const text = `⚠️ ${t(
+      langObj,
+      'not_able_to_create_a_channel_invite_link',
+    )}\n`;
     bot.telegram.sendMessage(userId, text + SUPPORT_TEXT);
   }
   return await response.status(200).end();
@@ -133,6 +141,10 @@ const handleSubscriptionDeleted = async (response, data) => {
   }
   const productId = get(data, 'plan.product', false);
   const channelId = get(data, 'metadata.channelId', false);
+  const lang = get(data, 'metadata.lang');
+  const botId = get(data, 'metadata.bot_id');
+  const langObj = {lang};
+
   const userId = data?.metadata?.userId;
   // 1.1 kick user from channel
   banUser(channelId, userId);
@@ -140,9 +152,15 @@ const handleSubscriptionDeleted = async (response, data) => {
   if (productId) {
     const product = await stripe.products.retrieve(productId);
     const price = await stripe.prices.retrieve(product?.default_price);
-    let text = '🔔 Your subscription was canceled successfully.\n';
-    text += 'You will not be charged again for below subscription:\n\n';
-    text += await contentProduct(price?.recurring);
+    let text = `🔔 ${t(
+      langObj,
+      'your_subscription_was_canceled_successfully',
+    )}\n`;
+    text += `${t(
+      langObj,
+      'you_will_not_be_charged_again_for_the_below_subscription',
+    )}:\n\n`;
+    text += await contentProduct(langObj, price?.recurring, botId);
     bot.telegram.sendMessage(userId, text);
   }
   return await response.status(200).end();

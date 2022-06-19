@@ -1,16 +1,19 @@
-const {forEach, size, head} = require('lodash');
+const {get, set, forEach, size, head} = require('lodash');
 const {Markup} = require('telegraf');
 // custom
 const {
   bot,
+  t,
+  getLang,
   stripe,
   isTyping,
+  isBotAdmin,
   getUsername,
   getUserId,
   getStatusInChannel,
 } = require('./utils');
 const {getBotdata, getChannelIds} = require('./services');
-const {commonKeyboard} = require('./bot-keyboards');
+const {commonKeyboard, langKeyboard} = require('./bot-keyboards');
 
 // helpers
 const getWebhookTelegram = async (ctx) => {
@@ -27,7 +30,7 @@ const getWebhookStripe = async (ctx) => {
     isTyping(ctx);
     const webhookEndpoints = await stripe.webhookEndpoints.list();
     const data = webhookEndpoints.data;
-    await ctx.reply(`Stripe webhooks: ${size(data)}pcs`, commonKeyboard);
+    await ctx.reply(`Stripe webhooks: ${size(data)}pcs`);
     isTyping(ctx);
     forEach(data, async (d, key) => {
       let text = `${key + 1} of ${size(data)}\n`;
@@ -46,29 +49,53 @@ const getWebhookStripe = async (ctx) => {
   }
 };
 
-// commands:
-// cmd: /start
-bot.command('/start', (ctx) => {
-  isTyping(ctx);
-  ctx.reply('🎉 Welcome onboard 歡迎');
+// public command:
+bot.command('/start', async (ctx) => {
+  const lang = getLang(ctx);
+  if (!get(ctx, 'session.lang')) {
+    set(ctx, 'session.lang', lang);
+  }
+  await ctx.reply(t(ctx, 'welcome'), commonKeyboard(lang));
+  await ctx.reply(t(ctx, 'choose_language'), langKeyboard(lang));
 });
-// cmd: /webhook_telegram
-bot.command('webhooks', async (ctx) => {
-  await getWebhookTelegram(ctx);
-  getWebhookStripe(ctx);
+// private commands for dev only:
+bot.command('/zh', async (ctx) => {
+  await set(ctx, 'session.lang', 'zh');
+  await ctx.reply(t(ctx, 'current_language'), commonKeyboard('zh'));
 });
-// cmd: /who
-bot.command('status', async (ctx) => {
+bot.command('/en', async (ctx) => {
+  await set(ctx, 'session.lang', 'en');
+  await ctx.reply(t(ctx, 'current_language'), commonKeyboard('en'));
+});
+bot.command('/lang', async (ctx) => {
+  // not able to confirm current language base on no keyboard ref
+  await ctx.reply(t(ctx, 'current_language'));
+  await ctx.reply(t(ctx, 'choose_language'), langKeyboard());
+});
+bot.command('/status', async (ctx) => {
   isTyping(ctx);
   const channelIds = await getChannelIds(ctx.update?.bot_id);
   const channelId = head(channelIds); // set multi
   const statusInChannel = await getStatusInChannel(channelId, getUserId(ctx));
-  ctx.reply(statusInChannel, commonKeyboard);
+  ctx.reply(statusInChannel);
 });
 bot.command('who', async (ctx) => {
   isTyping(ctx);
   const usernamneText = getUsername(ctx) ? `@${getUsername(ctx)}` : '⚠️ NULL';
   let message = `User ID: ${getUserId(ctx)}\n`;
   message += `Username: ${usernamneText}`;
-  ctx.reply(message, commonKeyboard);
+  ctx.reply(message);
+});
+// admin command:
+bot.command('/webhooks', async (ctx) => {
+  if (!isBotAdmin(ctx)) {
+    return;
+  }
+  await getWebhookTelegram(ctx);
+  getWebhookStripe(ctx);
+});
+bot.command('/t', async (ctx) => {
+  if (!isBotAdmin(ctx)) {
+    return;
+  }
 });

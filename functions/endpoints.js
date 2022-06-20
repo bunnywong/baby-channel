@@ -4,12 +4,14 @@ const {
   handleSubscriptionDeleted,
   handleSubscriptionUpdated,
 } = require('./bot-webhook-handle');
+const {t} = require('./utils');
 
 // helpers
 const setHtml = (content) => {
   let bodyStyle = 'color: white; font-family: system-ui;display: ';
   bodyStyle += 'flex; align-items: center; justify-content: center;';
   let html = '<html style="background: #1a1f36">';
+  html += '<meta charset="utf-8">';
   html += `<body style="${bodyStyle}">`;
   html += `<h1>${content}</h1></body></html>`;
   return html;
@@ -21,12 +23,11 @@ const test = async (request, response) => {
 };
 // /payment_cancel
 const paymentCancel = async (request, response) => {
-  return await response.status(200).end(setHtml('PAYMENT CANCEL'));
+  await response.status(200).end(setHtml(t(request.query, 'payment_cancel')));
 };
 // /payment_success
-const paymentSuccess = async (request, response) => {
-  return await response.status(200).end(setHtml('PAYMENT SUCCESS'));
-};
+const paymentSuccess = async (request, response) =>
+  await response.status(200).end(setHtml(t(request.query, 'payment_success')));
 // /webhook_subscription_created
 const webhookStripe = async (request, response) => {
   const data = request?.body?.data?.object;

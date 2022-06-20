@@ -1,5 +1,5 @@
 const {BASE_URL} = process.env;
-const {size, get, set, filter, forEach} = require('lodash');
+const {mapValues, size, get, set, filter, forEach} = require('lodash');
 const {Markup} = require('telegraf');
 const dayjs = require('dayjs');
 // custom
@@ -21,6 +21,8 @@ const sessionEndpoints = {
   success_url: `${BASE_URL}/payment_success`,
   cancel_url: `${BASE_URL}/payment_cancel`,
 };
+const getSessionEndpoints = (ctx) =>
+  mapValues(sessionEndpoints, (o) => `${o}?lang=${getLang(ctx)}`);
 
 // 0. hear
 bot.hears('PLANS', async (ctx) => {
@@ -54,7 +56,7 @@ const handlePlans = async (ctx) => {
     );
     const channelId = channel?.channel_id;
     const session = await stripe.checkout.sessions.create({
-      ...sessionEndpoints,
+      ...getSessionEndpoints(ctx),
       line_items: [{price: product?.default_price, quantity: 1}],
       mode: 'subscription',
       subscription_data: {
@@ -102,7 +104,7 @@ const handleStatus = async (ctx) => {
     payment_method_types: ['card'],
     mode: 'setup',
     customer: customerId,
-    ...sessionEndpoints,
+    ...getSessionEndpoints(ctx),
   });
   isTyping(ctx);
   forEach(userInSubscription, async (sub) => {

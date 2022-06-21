@@ -43,7 +43,9 @@ bot.hears('狀態', async (ctx) => {
 });
 // 1. plans
 const handlePlans = async (ctx) => {
+  await ctx.reply(`${t(ctx, 'plans_as_below')}:`);
   isTyping(ctx);
+
   const botId = ctx.update?.bot_id;
   const channelData = await getChannels(botId);
   channelData.forEach(async (channel) => {

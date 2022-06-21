@@ -28,5 +28,6 @@
   "you_dont_have_any_subscription": "You don't have any subscription",
   "payment_success": "PAYMENT SUCCESS",
   "payment_cancel": "PAYMENT CANCEL",
+  "plans_as_below": "Plans as below",
   "not_able_to_create_a_channel_invite_link": "Not able to a create channel invite link"
 }

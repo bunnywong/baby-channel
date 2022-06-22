@@ -1,4 +1,3 @@
-const {SUPPORT_TEXT} = process.env;
 const {Markup} = require('telegraf');
 const {set, size, get, isEmpty} = require('lodash');
 const dayjs = require('dayjs');
@@ -12,6 +11,7 @@ const {
   contentProduct,
   getStatusInChannel,
 } = require('./utils');
+const {getChannels} = require('./services');
 
 // helper
 const whitelistUser = async (channelId, userId) => {
@@ -67,7 +67,12 @@ const banUser = async (channelId, userId, botId) => {
 // 1. handler created
 const handleSubscriptionCreated = async (response, data) => {
   console.info('...webhook: customer.subscription.created');
-  const {lang, user_id: userId, channel_id: channelId} = data.metadata;
+  const {
+    lang,
+    user_id: userId,
+    channel_id: channelId,
+    bot_id: botId,
+  } = data.metadata;
   const langObj = {lang};
 
   const inviteLinkData = await bot.telegram.createChatInviteLink(channelId, {
@@ -101,11 +106,13 @@ const handleSubscriptionCreated = async (response, data) => {
       subscriptionUpdate?.status,
     );
   } else {
-    const text = `⚠️ ${t(
+    const channelData = await getChannels(botId);
+    const supportText = get(channelData, '[0].support_text');
+    const errorMessage = `⚠️ ${t(
       langObj,
       'not_able_to_create_a_channel_invite_link',
     )}\n`;
-    bot.telegram.sendMessage(userId, text + SUPPORT_TEXT);
+    bot.telegram.sendMessage(userId, errorMessage + supportText);
   }
   return await response.status(200).end();
 };

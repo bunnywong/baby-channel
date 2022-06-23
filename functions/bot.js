@@ -10,7 +10,7 @@ const i18n = new TelegrafI18n({
   defaultLanguage: 'zh',
   sessionName: 'session',
   useSession: true,
-  defaultLanguageOnMissing: true, // implies allowMissing = true
+  defaultLanguageOnMissing: true,
   directory: path.resolve(__dirname, 'locales'),
 });
 bot.use(session());

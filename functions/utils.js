@@ -17,8 +17,13 @@ const isBotAdmin = async (ctx) => {
   const botData = await getBotdata(ctx?.update?.bot_id);
   return Boolean(formUid === botData?.admin_uid);
 };
-const isMasterAdmin = (ctx) =>
-  String(get(ctx, 'update.message.from.id')) === String(MASTER_TG_UID);
+const isMasterAdmin = (ctx) => {
+  // data structure: reply || regular
+  const fromId =
+    get(ctx, 'update.callback_query.from.id') ||
+    get(ctx, 'update.message.from.id');
+  return String(fromId) === MASTER_TG_UID;
+};
 
 // translate: by session support
 const t = (ctx, message) => {

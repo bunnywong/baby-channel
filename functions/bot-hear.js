@@ -120,11 +120,12 @@ const handleStatus = async (ctx) => {
       statusText += `[admin] created: ${dateCreated}\n`;
       statusText += `[admin] Invoice status: ${invoice.status.toUpperCase()}`;
     }
-
+    // lines array
     const inlineRowOne = [];
-    // 2.1 line one:
+    const inlineRowTwo = [];
+    // 2.10 line #1:
     if (invoice?.hosted_invoice_url) {
-      // 2.11 button: [Receipt]
+      // 2.11 [Receipt]
       inlineRowOne.push(
         Markup.button.url(
           `📁 ${t(ctx, 'receipt')}`,
@@ -132,15 +133,14 @@ const handleStatus = async (ctx) => {
         ),
       );
     }
-    // 2.12 button: [Update Billing]
+    // 2.12 [Update Billing]
     if (session?.url) {
       inlineRowOne.push(
         Markup.button.url(`📝 ${t(ctx, 'update_billing')}`, session?.url),
       );
     }
-    // 2.20 line two:
-    const inlineRowTwo = [];
-    // 2.21 button: [Cancel Subscription]
+    // 2.20 line #2:
+    // 2.21 [Cancel Subscription]
     if (sub?.id) {
       inlineRowTwo.push(
         Markup.button.callback(
@@ -149,7 +149,7 @@ const handleStatus = async (ctx) => {
         ),
       );
     }
-    // 2.22 button: [Join Channel]
+    // 2.22 [Join Channel]
     if (sub?.metadata?.invite_link) {
       inlineRowTwo.push(btnJoinChannel(ctx, sub.metadata.invite_link));
     }

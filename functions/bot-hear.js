@@ -122,9 +122,9 @@ const handleStatus = async (ctx) => {
     }
 
     const inlineRowOne = [];
-    // 2.11 line one:
+    // 2.1 line one:
     if (invoice?.hosted_invoice_url) {
-      // button: Invoice
+      // 2.11 button: [Receipt]
       inlineRowOne.push(
         Markup.button.url(
           `📁 ${t(ctx, 'receipt')}`,
@@ -132,15 +132,15 @@ const handleStatus = async (ctx) => {
         ),
       );
     }
-    // 2.12 button: Billing
+    // 2.12 button: [Update Billing]
     if (session?.url) {
       inlineRowOne.push(
         Markup.button.url(`📝 ${t(ctx, 'update_billing')}`, session?.url),
       );
     }
-    // 2.21 line two:
+    // 2.20 line two:
     const inlineRowTwo = [];
-    // button: Cancel Subscription
+    // 2.21 button: [Cancel Subscription]
     if (sub?.id) {
       inlineRowTwo.push(
         Markup.button.callback(
@@ -149,7 +149,7 @@ const handleStatus = async (ctx) => {
         ),
       );
     }
-    // 2.22 button: invite link
+    // 2.22 button: [Join Channel]
     if (sub?.metadata?.invite_link) {
       inlineRowTwo.push(btnJoinChannel(ctx, sub.metadata.invite_link));
     }
